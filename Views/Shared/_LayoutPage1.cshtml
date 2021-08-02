@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Im The Layout Page</title>
+
+    <link href="@Url.Content("~/Content/Stylesheet.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="nav">
+        <ul>
+            <li><a href="javascript:void(0)" onclick="myIndex()">Home</a></li>
+            <li><a href="javascript:void(0)" onclick="myLogIn()">Login</a></li>
+            <li><a href="javascript:void(0)" onclick="mySignUp()">Signup</a></li>
+            <li><a href="javascript:void(0)" onclick="myConnect()">Connect</a></li>
+            <li><a href="javascript:void(0)" onclick="myRoom()">Room</a></li>
+        </ul>
+    </div>
+    @RenderBody()
+
+    <script type="text/javascript">
+    function myLogIn() {
+        location.href = '@Url.Action("LogIn","my")';
+    }
+    function mySignUp() {
+        location.href = '@Url.Action("SignUp","my")';
+    }
+    function myIndex() {
+        location.href = '@Url.Action("Index", "my")';
+    }
+    function myConnect() {
+        location.href = '@Url.Action("Connect", "my")';
+        }
+    function myRoom() {
+        location.href = '@Url.Action("Room", "my")';
+    }
+
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

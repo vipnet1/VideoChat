@@ -1,0 +1,39 @@
+﻿@model VideoChat.Models.Room
+
+@{
+    ViewBag.Title = "Room";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<h2>My Room:</h2>
+<br>
+<h3>Identifier: @Model.identifier</h3>
+<h3>Creator Name: @Model.creatorUsername</h3>
+<h3>Joiner Name: @Model.joinerUsername</h3>
+
+<input type="button" id="sendmessage" value="Send Via Socket" />
+
+@Scripts.Render("~/bundles/jquery")
+
+@section scripts {
+    <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $(function () {
+            var chat = $.connection.chatHub;
+
+            chat.client.getNewMessage = function (message) {
+                alert('response from server: ' + message);
+            };
+
+
+            $.connection.hub.start().done(function () {
+                $('#sendmessage').click(function () {
+                    alert('sending: hallo');
+                    chat.server.send('hallo');
+                });
+            });
+        });
+
+    </script>
+}

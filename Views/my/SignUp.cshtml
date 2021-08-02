@@ -1,0 +1,68 @@
+﻿@model VideoChat.Models.SignUp
+@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<div class="dataform">
+    Insert new Username
+    <br>
+    @Html.TextBox("UserName")
+    <br>
+    Insert new Password
+    <br>
+    @Html.TextBox("Password")
+    <br>
+    Repeat new Password
+    <br>
+    @Html.TextBox("Password_2")
+    <br>
+    <input type="button" value="OK" onclick="myClick()" />
+</div>
+
+<script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
+
+<script type="text/javascript">
+    var xmlHttp;
+    window.onload = function () {
+        if (window.ActiveXObject)
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        else if (window.XMLHttpRequest)
+            xmlHttp = new XMLHttpRequest();
+    }
+    function myClick() {
+        let UserName = document.getElementById("UserName").value;
+        let Password = document.getElementById("Password").value;
+        let Password_2 = document.getElementById("Password_2").value;
+        if (UserName != null & Password != null && Password_2 != null) {
+            if (Password == Password_2) {
+                let enc_pass = SHA256(Password);
+                alert(enc_pass);
+                let JSON_Obj = new Object();
+                JSON_Obj.UserName = UserName;
+                JSON_Obj.Password = enc_pass;
+                let JSON_Str = JSON.stringify(JSON_Obj);
+                let url = '@Url.Action("ActionSignUp","my")';
+                xmlHttp.open("POST", url, true);
+                xmlHttp.setRequestHeader('Content-Type', 'application/json');
+                xmlHttp.onreadystatechange = getResponseSignUp;
+                xmlHttp.send(JSON_Str);
+
+            }
+            else {
+                alert("the passwords are not simillar")
+            }
+        }
+        else {
+            alert("please fill all your required info");
+        }
+    }
+
+
+    function getResponseSignUp() {
+        if (xmlHttp.readyState == 4) {
+            alert(xmlHttp.responseText);
+        }
+    }
+
+
+</script>

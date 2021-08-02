@@ -1,0 +1,57 @@
+﻿@model VideoChat.Models.User
+@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<div class="dataform">
+    Username
+    <br>
+    <input type="text" id="UserName">
+    <br>
+    Password
+    <br>
+    <input type="password" id="Password">
+    <br>
+    <input type="button" value="OK" onclick="myClick()" />
+</div>
+
+<script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
+
+<script type="text/javascript">
+    var xmlHttp;
+    window.onload = function () {
+        if (window.ActiveXObject)
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        else if (window.XMLHttpRequest)
+            xmlHttp = new XMLHttpRequest();
+    }
+    function myClick() {
+        let username = document.getElementById("UserName").value;
+        let password = document.getElementById("Password").value;
+        if (username != null && password != null) {
+            let enc_password = SHA256(password);
+            let JSON_Obj = new Object();
+            JSON_Obj.UserName = username;
+            JSON_Obj.Password = enc_password;
+            let JSON_Str = JSON.stringify(JSON_Obj);
+            let url = '@Url.Action("ActionLogIn", "my")'
+            xmlHttp.open("POST", url, true);
+            xmlHttp.setRequestHeader('Content-Type', 'application/json');
+            xmlHttp.onreadystatechange = getResponseLogIn;
+            xmlHttp.send(JSON_Str);
+        }
+        else {
+            alert("please fill your data");
+        }
+
+    }
+    function getResponseLogIn() {
+        if (xmlHttp.readyState == 4) {
+            alert(xmlHttp.responseText);
+            if (xmlHttp.responseText == "success") {
+                location.href = '@Url.Action("Index", "my")';
+            }
+        }
+    }
+
+</script>

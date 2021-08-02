@@ -1,0 +1,59 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<div class="dataform">
+    <input type="button" value="New Room" onclick="NewRoomClick()" />
+    <br><br>
+    Enter an existing one
+    <br>
+    @Html.TextBox("RoomCode")
+    <br>
+    <input type="button" value="Connect" onclick="JoinRoomClick()"/>
+</div>
+
+<script type="text/javascript">
+    var xmlHttp;
+    window.onload = function () {
+        if (window.ActiveXObject)
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        else if (window.XMLHttpRequest)
+            xmlHttp = new XMLHttpRequest();
+    }
+    function NewRoomClick() {
+        let url = '@Url.Action("ActionNewRoom", "my")';
+        xmlHttp.open("GET", url, true);
+        xmlHttp.onreadystatechange = getResponseNewRoom;
+        xmlHttp.send();
+    }
+    function getResponseNewRoom() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.responseText != "") {
+                location.href = '@Url.Action("Room","my")';
+            }
+        }
+    }
+
+
+    function JoinRoomClick() {
+        let code = document.getElementById('RoomCode').value;
+        let url = '@Url.Action("ActionJoinRoom", "my")' + '?code=' + code;
+        alert(url);
+        xmlHttp.open("GET", url, true);
+        xmlHttp.onreadystatechange = getResponseJoinRoom;
+        xmlHttp.send();
+    }
+    function getResponseJoinRoom() {
+        if (xmlHttp.readyState == 4) {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.responseText != "") {
+                location.href = '@Url.Action("Room","my")';
+            }
+            else
+                alert("No Such Room Exists")
+        }
+        }
+    }
+
+</script>
