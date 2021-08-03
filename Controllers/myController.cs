@@ -14,6 +14,14 @@ namespace VideoChat.Controllers
         UserContext db = new UserContext();
         DAL.DAL_allActions dal = new DAL.DAL_allActions();
 
+        private HttpCookie CreateCookie(string name)
+        {
+            HttpCookie cookie = new HttpCookie(name);
+            cookie.Value = (Session["usr"] as User).UserName;
+            cookie.Expires = DateTime.Now.AddHours(1);
+            return cookie;
+        }
+
         public bool isLoggedIn() { return Session["usr"] != null; }
         public bool isRoomReady() { return Session["room"] != null; }
         
@@ -72,6 +80,7 @@ namespace VideoChat.Controllers
             if(curr != null)
             {
                 Session["usr"] = curr;
+                Response.Cookies.Add(CreateCookie("usr"));
                 return "success";
             }
             return "error";
@@ -95,7 +104,7 @@ namespace VideoChat.Controllers
 
             string code =  DAL.DAL_allActions.RandomString(32);
             Session["room"] = await dal.CreateRoom(code, (Session["usr"] as User).UserName);
-            return Room();
+            return new RedirectResult("Room");
         }
 
         [HttpGet]
