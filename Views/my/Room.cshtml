@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Room";
-    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+    Layout = "~/Views/Shared/_LayoutPage1_NoMenu.cshtml";
 }
 
 <h2>My Room:</h2>
@@ -10,8 +10,6 @@
 <h3>Identifier: @Model.identifier</h3>
 <h3>Creator Name: @Model.creatorUsername</h3>
 <h3>Joiner Name: @Model.joinerUsername</h3>
-
-<input type="button" id="sendmessage" value="Send Via Socket" />
 
 @Scripts.Render("~/bundles/jquery")
 
@@ -25,31 +23,18 @@
             let uname = getCookie('usr');
             var chat = $.connection.chatHub;
             let lc = null;
-            let sdp = "";
-            
-            chat.client.getNewMessage = function (message) {
-                alert('response from server: ' + message);
-            };
 
             chat.client.firstSDP = function (message) {
                 lc.setRemoteDescription(JSON.parse(message)).then(a => console.log("offer set!"));
                 lc.createAnswer().then(a => lc.setLocalDescription(a)).then(a => console.log("answer created"));
 
                 setTimeout(function () {
-                    alert('now');
-                    alert(sdp);
                     chat.server.rtr_ThirdStepJoiner(uname, JSON.stringify(lc.localDescription), '@Model.creatorUsername');
-                }, 5000);
-
-                alert('response from server: ' + message);
+                }, 3000);
             };
 
             chat.client.secondSDP = function (message) {
-                alert('here');
-                alert(message);
                 lc.setRemoteDescription(JSON.parse(message));
-
-                alert('response from server: ' + message);
             };
 
 
@@ -59,30 +44,27 @@
                     dc = lc.createDataChannel("channel");
                     dc.onmessage = e => {
                         console.log("Just got a message: " + e.data);
-                        //alert(e.data);
                     };
                     dc.onopen = e => {
                         console.log("Connection opened");
                     };
                     lc.onicecandidate = e => {
-                        console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
+                        //console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
                     }
                     lc.createOffer().then(o => lc.setLocalDescription(o)).then(a => console.log("set successfully"));
                     setTimeout(function () {
                         chat.server.rtr_FirstStepInitiator(uname, JSON.stringify(lc.localDescription));
-                    }, 500);
+                    }, 2000);
                 }
                 else {
                     lc = new RTCPeerConnection();
                     lc.onicecandidate = e => {
-                        sdp = JSON.stringify(lc.localDescription);
-                        console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
+                        //console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
                     }
                     lc.ondatachannel = e => {
                         dc = e.channel;
                         dc.onmessage = e => {
                             console.log("Just got a message: " + e.data);
-                            //alert(e.data);
                         };
                         dc.onopen = e => {
                             console.log("Connection opened");

@@ -28,7 +28,7 @@
     function myClick() {
         let username = document.getElementById("UserName").value;
         let password = document.getElementById("Password").value;
-        if (username != null && password != null) {
+        if (username != "" && password != "") {
             let enc_password = SHA256(password);
             let JSON_Obj = new Object();
             JSON_Obj.UserName = username;
@@ -43,7 +43,6 @@
         else {
             alert("please fill your data");
         }
-
     }
     function getResponseLogIn() {
         if (xmlHttp.readyState == 4) {
@@ -53,5 +52,4 @@
             }
         }
     }
-
 </script>

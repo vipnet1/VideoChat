@@ -153,7 +153,6 @@
     </Compile>
     <Compile Include="Hubs\Hub1.cs" />
     <Compile Include="Models\Room.cs" />
-    <Compile Include="Models\SignUp.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -201,6 +200,7 @@
     <Content Include="Views\my\LogIn.cshtml" />
     <Content Include="Views\my\Room.cshtml" />
     <Content Include="Views\my\SignUp.cshtml" />
+    <Content Include="Views\Shared\_LayoutPage1_NoMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

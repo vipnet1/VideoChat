@@ -1,4 +1,4 @@
-﻿@model VideoChat.Models.SignUp
+﻿
 @{
     Layout = "~/Views/Shared/_LayoutPage1.cshtml";
 }
@@ -33,10 +33,10 @@
         let UserName = document.getElementById("UserName").value;
         let Password = document.getElementById("Password").value;
         let Password_2 = document.getElementById("Password_2").value;
-        if (UserName != null & Password != null && Password_2 != null) {
+        if (UserName != "" && Password != "" && Password_2 != "") {
             if (Password == Password_2) {
                 let enc_pass = SHA256(Password);
-                alert(enc_pass);
+                //alert(enc_pass);
                 let JSON_Obj = new Object();
                 JSON_Obj.UserName = UserName;
                 JSON_Obj.Password = enc_pass;
@@ -46,7 +46,6 @@
                 xmlHttp.setRequestHeader('Content-Type', 'application/json');
                 xmlHttp.onreadystatechange = getResponseSignUp;
                 xmlHttp.send(JSON_Str);
-
             }
             else {
                 alert("the passwords are not simillar")

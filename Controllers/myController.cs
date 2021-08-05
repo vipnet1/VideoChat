@@ -28,11 +28,7 @@ namespace VideoChat.Controllers
         // GET: My
         public ActionResult Index()
         {
-            IEnumerable<User> Employees = db.Users;
-            if (db.Users != null)
-                Console.WriteLine("success");
             return View();
-
         }
         public ActionResult LogIn()
         {
@@ -73,9 +69,7 @@ namespace VideoChat.Controllers
         [HttpPost]
         public async Task<string> ActionLogIn(string UserName, string Password)
         {
-            User u = new User();
-            u.UserName = UserName;
-            u.Password = Password;
+            User u = new User(UserName, Password);
             User curr = await dal.LogIn(u);
             if(curr != null)
             {
@@ -88,9 +82,7 @@ namespace VideoChat.Controllers
         [HttpPost]
         public async Task<string> ActionSignUp(string UserName, string Password)
         {
-            User u = new User();
-            u.UserName = UserName;
-            u.Password = Password;
+            User u = new User(UserName, Password);
             return await dal.SignUp(u);
         }
 

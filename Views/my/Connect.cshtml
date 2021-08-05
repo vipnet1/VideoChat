@@ -39,7 +39,7 @@
     function JoinRoomClick() {
         let code = document.getElementById('RoomCode').value;
         let url = '@Url.Action("ActionJoinRoom", "my")' + '?code=' + code;
-        alert(url);
+        //alert(url);
         xmlHttp.open("GET", url, true);
         xmlHttp.onreadystatechange = getResponseJoinRoom;
         xmlHttp.send();
