@@ -5,16 +5,26 @@
     Layout = "~/Views/Shared/_LayoutPage1_NoMenu.cshtml";
 }
 
+<!--those hidden img so server will send images to client, but they wont be visible till the right moment-->
+<img id="IMG_video_on" style="display: none;" src="~/Images/video_on.png" />
+<img id="IMG_video_off" style="display: none;" src="~/Images/video_off.png" />
+
 <h2>My Room:</h2>
 <br>
 <h3>Identifier: @Model.identifier</h3>
 <h3>Creator Name: @Model.creatorUsername</h3>
 <h3 id="joinerUname">Joiner Name: @Model.joinerUsername</h3>
 
-<textarea id="chatMessagesWindow" typeof="text" rows=25 cols=30 disabled="true"></textarea>
-<br />
-<textarea id="chatWindow" typeof="text" rows=10 cols=30></textarea>
-<button id="sendBtn" onclick="SendChatMessage()">Send</button>
+<div id="ChattingStuff">
+    <textarea id="chatMessagesWindow" typeof="text" rows=25 cols=30 disabled="true"></textarea>
+    <br />
+    <textarea id="chatWindow" typeof="text" rows=10 cols=30></textarea>
+    <button id="sendBtn" onclick="SendChatMessage()">Send</button>
+</div>
+
+<video id="localVideo" autoplay playsinline></video>
+<br /><br />
+<img id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" />
 
 
 @Scripts.Render("~/bundles/jquery")
@@ -23,8 +33,30 @@
     <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
+    <script type="text/javascript" src="@Url.Content("/Scripts/DeviceManagement.js")"></script>
     <script>
-        let chatWindow, chatMessagesWindow;
+        const IMG_VIDEO_ON = document.getElementById("IMG_video_on");
+        const IMG_VIDEO_OFF = document.getElementById("IMG_video_off");
+
+        const chatMessagesWindow = document.getElementById('chatMessagesWindow');
+        const chatWindow = document.getElementById('chatWindow');
+        const img_video = document.getElementById('img_video');
+        let streamsReady = false;
+
+        InitStreams().then(() => streamsReady = true);
+
+        function Click_ShowDisableVideo() {
+            if (!streamsReady) return;
+            if (img_video.src == IMG_VIDEO_ON.src) {
+                img_video.src = IMG_VIDEO_OFF.src;
+                disableVideoFromCamera();
+            }
+            else {
+                img_video.src = IMG_VIDEO_ON.src;
+                playVideoFromCamera();
+            }
+        }
+
         function SendChatMessage() {
             const txt = uname + ': ' + chatWindow.value + '\n';
             dc.send(txt);
@@ -64,8 +96,6 @@
 
 
             $.connection.hub.start().done(function () {
-                chatMessagesWindow = document.getElementById('chatMessagesWindow');
-                chatWindow = document.getElementById('chatWindow');
                 if (uname == '@Model.creatorUsername') {
                     lc = new RTCPeerConnection();
                     dc = lc.createDataChannel("channel");

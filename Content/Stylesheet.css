@@ -5,6 +5,11 @@ body {
     background-color: deepskyblue;
 }
 
+#ChattingStuff {
+    float: left;
+    padding: 10px 10px 10px 20px;
+}
+
 #divWelcome {
     background-color: mediumslateblue;
 }
