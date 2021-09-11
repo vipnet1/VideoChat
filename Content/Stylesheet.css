@@ -5,6 +5,19 @@ body {
     background-color: deepskyblue;
 }
 
+#divWelcome {
+    background-color: mediumslateblue;
+}
+
+#divWelcome p {
+    margin: 0;
+    background-color: mediumslateblue;
+    text-align: center;
+    color: darkred;
+    font-size: 22px;
+    font: Tahoma;
+}
+
 #nav {
     background-color: blue;
     height: auto;
@@ -42,6 +55,18 @@ body {
     background-color: white;
     border-radius: 8px;
     box-shadow: 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+#chatWindow {
+    margin: 10px;
+    background-color: cadetblue;
+    border-radius: 10px;
+}
+
+#chatMessagesWindow {
+    margin: 10px;
+    background-color: cornflowerblue;
+    border-radius: 10px;
 }
 
 .dataform {

@@ -60,6 +60,9 @@
     function getResponseSignUp() {
         if (xmlHttp.readyState == 4) {
             alert(xmlHttp.responseText);
+            if (xmlHttp.responseText == "success") {
+                location.href = '@Url.Action("Index", "my")';
+            }
         }
     }
 

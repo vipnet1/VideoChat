@@ -9,7 +9,13 @@
 <br>
 <h3>Identifier: @Model.identifier</h3>
 <h3>Creator Name: @Model.creatorUsername</h3>
-<h3>Joiner Name: @Model.joinerUsername</h3>
+<h3 id="joinerUname">Joiner Name: @Model.joinerUsername</h3>
+
+<textarea id="chatMessagesWindow" typeof="text" rows=25 cols=30 disabled="true"></textarea>
+<br />
+<textarea id="chatWindow" typeof="text" rows=10 cols=30></textarea>
+<button id="sendBtn" onclick="SendChatMessage()">Send</button>
+
 
 @Scripts.Render("~/bundles/jquery")
 
@@ -18,9 +24,27 @@
     <script src="~/signalr/hubs"></script>
     <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
     <script>
+        let chatWindow, chatMessagesWindow;
+        function SendChatMessage() {
+            const txt = uname + ': ' + chatWindow.value + '\n';
+            dc.send(txt);
+            chatWindow.value = '';
+            chatMessagesWindow.value += txt;
+        }
+
+        function ConnectionOpenedMessage() {
+            const msg = 'Connection established. Enjoy conversation :)\n\n'
+            chatMessagesWindow.value += msg;
+        }
+
+        function OnMessage(msg) {
+            chatMessagesWindow.value += msg;
+        }
+
         let dc = null;
+        let uname;
         $(function () {
-            let uname = getCookie('usr');
+            uname = getCookie('usr');
             var chat = $.connection.chatHub;
             let lc = null;
 
@@ -33,20 +57,24 @@
                 }, 3000);
             };
 
-            chat.client.secondSDP = function (message) {
+            chat.client.secondSDP = function (message, partnerUname) {
                 lc.setRemoteDescription(JSON.parse(message));
+                document.getElementById('joinerUname').innerHTML = 'Joiner Name: ' + partnerUname;
             };
 
 
             $.connection.hub.start().done(function () {
+                chatMessagesWindow = document.getElementById('chatMessagesWindow');
+                chatWindow = document.getElementById('chatWindow');
                 if (uname == '@Model.creatorUsername') {
                     lc = new RTCPeerConnection();
                     dc = lc.createDataChannel("channel");
                     dc.onmessage = e => {
-                        console.log("Just got a message: " + e.data);
+                        OnMessage(e.data);
                     };
                     dc.onopen = e => {
                         console.log("Connection opened");
+                        ConnectionOpenedMessage();
                     };
                     lc.onicecandidate = e => {
                         //console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
@@ -64,10 +92,11 @@
                     lc.ondatachannel = e => {
                         dc = e.channel;
                         dc.onmessage = e => {
-                            console.log("Just got a message: " + e.data);
+                            OnMessage(e.data);
                         };
                         dc.onopen = e => {
                             console.log("Connection opened");
+                            ConnectionOpenedMessage();
                         };
                     }
 

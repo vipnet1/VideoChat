@@ -14,40 +14,61 @@ namespace VideoChat.Controllers
         UserContext db = new UserContext();
         DAL.DAL_allActions dal = new DAL.DAL_allActions();
 
+        private bool wasOnMainPage() {
+            if (Session["wasOnMainPage"] == null) return false;
+            return (bool)Session["wasOnMainPage"];
+        }
+        private void setWasOnMainPage() { Session["wasOnMainPage"] = true; }
         private HttpCookie CreateCookie(string name)
         {
             HttpCookie cookie = new HttpCookie(name);
             cookie.Value = (Session["usr"] as User).UserName;
-            cookie.Expires = DateTime.Now.AddHours(1);
+            cookie.Expires = DateTime.Now.AddDays(1);
             return cookie;
         }
 
         public bool isLoggedIn() { return Session["usr"] != null; }
         public bool isRoomReady() { return Session["room"] != null; }
+
+        private async Task<bool> ValidateLoginCookie(HttpCookie usrCookie)
+        {
+            if (usrCookie != null)
+            {
+                User u = await dal.GetUser(usrCookie.Value);
+                if (u != null)
+                {
+                    Session["usr"] = u;
+                    return true;
+                }
+            }
+            return false;
+        }
         
         // GET: My
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            if(!wasOnMainPage() && !isLoggedIn())
+            {
+                setWasOnMainPage();
+                await ValidateLoginCookie(Request.Cookies.Get("usr"));
+            }
             return View();
         }
         public ActionResult LogIn()
         {
-            if (!isLoggedIn())
-                return View();
-            else
-                return new RedirectResult("Index");
+            if (!wasOnMainPage()) return new RedirectResult("Index");
+            return View();
         }
         public ActionResult SignUp()
         {
-            if (!isLoggedIn())
-                return View();
-            else
-                return new RedirectResult("Index");
+            if (!wasOnMainPage()) return new RedirectResult("Index");
+            return View();
         }
 
         public ActionResult Connect()
         {
-            if(isLoggedIn())
+            if (!wasOnMainPage()) return new RedirectResult("Index");
+            if (isLoggedIn())
             {
                 if(!isRoomReady())
                     return View();
@@ -60,6 +81,7 @@ namespace VideoChat.Controllers
 
         public ActionResult Room()
         {
+            if (!wasOnMainPage()) return new RedirectResult("Index");
             if (isRoomReady())
                 return View(Session["room"] as Room);
             else
@@ -83,7 +105,13 @@ namespace VideoChat.Controllers
         public async Task<string> ActionSignUp(string UserName, string Password)
         {
             User u = new User(UserName, Password);
-            return await dal.SignUp(u);
+            string res = await dal.SignUp(u);
+            if(res == "success")
+            {
+                Session["usr"] = u;
+                Response.Cookies.Add(CreateCookie("usr"));
+            }
+            return res;
         }
 
         [HttpGet]

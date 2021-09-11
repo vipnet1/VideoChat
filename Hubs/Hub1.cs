@@ -38,11 +38,11 @@ namespace SignalR.Hubs
             Clients.Caller.firstSDP(dict[unameToConnect].sdp);
         }
 
-        //retirieve username, sdp and who to connect, send sdp of joiner to initiator
+        //retirieve username, sdp and who to connect, send sdp of joiner and his uname to initiator
         public void rtr_ThirdStepJoiner(string uname, string sdp, string unameToConnect)
         {
             dict[uname].sdp = sdp;
-            Clients.Client(dict[unameToConnect].connectionId).secondSDP(dict[uname].sdp);
+            Clients.Client(dict[unameToConnect].connectionId).secondSDP(dict[uname].sdp, uname);
 
             dict.Remove(uname);
             dict.Remove(unameToConnect);

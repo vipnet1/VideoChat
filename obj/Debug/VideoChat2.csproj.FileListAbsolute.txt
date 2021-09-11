@@ -1,4 +1,3 @@
-D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\obj\Debug\VideoChat2.csprojAssemblyReference.cache
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\obj\Debug\VideoChat2.csproj.CoreCompileInputs.cache
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\VideoChat2.dll.config
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\VideoChat2.dll
@@ -94,3 +93,4 @@ D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Micro
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Microsoft.Owin.xml
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Microsoft.Owin.Host.SystemWeb.xml
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Microsoft.Owin.Security.xml
+D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\obj\Debug\VideoChat2.csprojAssemblyReference.cache

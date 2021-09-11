@@ -55,6 +55,11 @@ namespace VideoChat.DAL
             return "error, it seems that the UserName already exist, please change your UserName";
         }
 
+        public async Task<User> GetUser(string name)
+        {
+            return await db.Users.FindAsync(name);
+        }
+
         public async Task<User> LogIn(User u)
         {
             User findUser = await db.Users.FindAsync(u.UserName);
