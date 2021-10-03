@@ -8,6 +8,8 @@
 <!--those hidden img so server will send images to client, but they wont be visible till the right moment-->
 <img id="IMG_video_on" style="display: none;" src="~/Images/video_on.png" />
 <img id="IMG_video_off" style="display: none;" src="~/Images/video_off.png" />
+<img id="IMG_audio_on" style="display: none;" src="~/Images/audio_on.png" />
+<img id="IMG_audio_off" style="display: none;" src="~/Images/audio_off.png" />
 
 <h2>My Room:</h2>
 <br>
@@ -23,8 +25,11 @@
 </div>
 
 <video id="localVideo" autoplay playsinline></video>
-<br /><br />
+<audio id="localAudio" autoplay></audio>
+<br />
+<br />
 <img id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" />
+<img id="img_audio" onclick="Click_ShowDisableAudio()" src="~/Images/audio_on.png" draggable="false" />
 
 
 @Scripts.Render("~/bundles/jquery")
@@ -37,23 +42,84 @@
     <script>
         const IMG_VIDEO_ON = document.getElementById("IMG_video_on");
         const IMG_VIDEO_OFF = document.getElementById("IMG_video_off");
+        const IMG_AUDIO_ON = document.getElementById("IMG_audio_on");
+        const IMG_AUDIO_OFF = document.getElementById("IMG_audio_off");
 
         const chatMessagesWindow = document.getElementById('chatMessagesWindow');
         const chatWindow = document.getElementById('chatWindow');
         const img_video = document.getElementById('img_video');
-        let streamsReady = false;
+        let videoReady = false, audioReady = false;
+        let initingNow = false;
 
-        InitStreams().then(() => streamsReady = true);
+        async function TryInitCamAndMic() {
+            if (initingNow) return;
+            initingNow = true;
+            InitStreams().then((num) => {
+                streamsReady = true
+                switch (num) {
+                    case 3:
+                        videoReady = audioReady = true;
+                        img_video.src = IMG_VIDEO_ON.src;
+                        img_audio.src = IMG_AUDIO_ON.src;
+                        break;
+                    case 2:
+                        audioReady = true;
+                        videoReady = false;
+                        img_video.src = IMG_VIDEO_OFF.src;
+                        img_audio.src = IMG_AUDIO_ON.src;
+                        break;
+                    case 1:
+                        videoReady = true;
+                        audioReady = false;
+                        img_video.src = IMG_VIDEO_ON.src;
+                        img_audio.src = IMG_AUDIO_OFF.src;
+                        break;
+                    case 0:
+                        videoReady = audioReady = false;
+                        img_video.src = IMG_VIDEO_OFF.src;
+                        img_audio.src = IMG_AUDIO_OFF.src;
+                        break;
+                }
+
+                initingNow = false;
+            });
+        }
+
+        navigator.mediaDevices.ondevicechange = function (event) {
+            TryInitCamAndMic();
+        }
+
+
+
+
+        TryInitCamAndMic();
 
         function Click_ShowDisableVideo() {
-            if (!streamsReady) return;
+            if (!videoReady) {
+                return;
+            };
             if (img_video.src == IMG_VIDEO_ON.src) {
                 img_video.src = IMG_VIDEO_OFF.src;
-                disableVideoFromCamera();
+                disableVideo();
             }
             else {
                 img_video.src = IMG_VIDEO_ON.src;
-                playVideoFromCamera();
+                playVideo();
+            }
+        }
+
+
+        function Click_ShowDisableAudio() {
+            if (!audioReady) {
+                return;
+            }
+            if (img_audio.src == IMG_AUDIO_ON.src) {
+                img_audio.src = IMG_AUDIO_OFF.src;
+                disableAudio();
+            }
+            else {
+                img_audio.src = IMG_AUDIO_ON.src;
+                playAudio();
             }
         }
 

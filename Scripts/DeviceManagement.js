@@ -17,26 +17,76 @@ async function openCamera(cameraId, minWidth, minHeight) {
     return await navigator.mediaDevices.getUserMedia(constraints);
 }
 
-async function InitStreams() {
+async function InitAudioStream() { //true if success
     try {
-        const constraints = { 'video': true, 'audio': true };
+        const constraints = { 'audio': true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const audioElement = document.querySelector('#localAudio');
+        audioElement.srcObject = stream;
+        console.log('init mic')
+        audioYES = true;
+        return true;
+    } catch (error) {
+        console.error('Error opening just mic.', error);
+    }
+    return false;
+}
+
+async function InitVideoStream() { //true if success
+    try {
+        const constraints = { 'video': true };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         const videoElement = document.querySelector('#localVideo');
         videoElement.srcObject = stream;
+        console.log('init camera')
+        return true;
     } catch (error) {
         console.error('Error opening video camera.', error);
     }
+    return false;
 }
 
-async function disableVideoFromCamera() {
+
+async function InitStreams(isCamOpen, isAudioOpen) { //3 - audio and video ready. 2 - just audio. 1 - just videio. 0 - norhing.
+
+    const audioYES = await InitAudioStream();
+    const videoYES = await InitVideoStream();
+
+    if (videoYES) {
+        if (audioYES) {
+            return 3;
+        }
+        else
+            return 1;
+    }
+    else {
+        if (audioYES) {
+            return 2;
+        }
+        else {
+            console.log('could init nothing')
+            return 0;
+        }
+    }
+}
+
+async function disableVideo() {
     const stream = document.querySelector('#localVideo').srcObject;
     stream.getVideoTracks()[0].enabled = false;
+}
+
+async function playVideo() {
+    const stream = document.querySelector('#localVideo').srcObject;
+    stream.getVideoTracks()[0].enabled = true;
+}
+
+async function disableAudio() {
+    const stream = document.querySelector('#localAudio').srcObject;
     stream.getAudioTracks()[0].enabled = false;
 }
 
-async function playVideoFromCamera() {
-    const stream = document.querySelector('#localVideo').srcObject;
-    stream.getVideoTracks()[0].enabled = true;
+async function playAudio() {
+    const stream = document.querySelector('#localAudio').srcObject;
     stream.getAudioTracks()[0].enabled = true;
 }
 

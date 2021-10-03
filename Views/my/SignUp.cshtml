@@ -35,6 +35,10 @@
         let Password_2 = document.getElementById("Password_2").value;
         if (UserName != "" && Password != "" && Password_2 != "") {
             if (Password == Password_2) {
+                if (Password.length < 6) {
+                    alert('too short password!');
+                    return;
+                }
                 let enc_pass = SHA256(Password);
                 //alert(enc_pass);
                 let JSON_Obj = new Object();
