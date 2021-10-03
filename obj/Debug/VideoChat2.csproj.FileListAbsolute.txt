@@ -93,3 +93,4 @@ D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Micro
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Microsoft.Owin.xml
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Microsoft.Owin.Host.SystemWeb.xml
 D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\bin\Microsoft.Owin.Security.xml
+D:\Workspace\advancedWindowsProg\aspCreatedStuff\VideoChat2\VideoChat2\obj\Debug\VideoChat2.csprojAssemblyReference.cache

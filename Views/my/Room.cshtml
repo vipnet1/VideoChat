@@ -24,6 +24,9 @@
     <button id="sendBtn" onclick="SendChatMessage()">Send</button>
 </div>
 
+<video id="remoteVideo" autoplay playsinline></video>
+<br /><br />
+
 <video id="localVideo" autoplay playsinline></video>
 <audio id="localAudio" autoplay></audio>
 <br />
@@ -50,6 +53,9 @@
         const img_video = document.getElementById('img_video');
         let videoReady = false, audioReady = false;
         let initingNow = false;
+        let lc = null;
+
+        //camera/mic management stuff
 
         async function TryInitCamAndMic() {
             if (initingNow) return;
@@ -91,9 +97,6 @@
 
 
 
-
-        TryInitCamAndMic();
-
         function Click_ShowDisableVideo() {
             if (!videoReady) {
                 return;
@@ -123,6 +126,14 @@
             }
         }
 
+
+        TryInitCamAndMic();
+
+
+
+
+        //chatting stuff
+
         function SendChatMessage() {
             const txt = uname + ': ' + chatWindow.value + '\n';
             dc.send(txt);
@@ -139,12 +150,18 @@
             chatMessagesWindow.value += msg;
         }
 
+
+
+
+
+
+        //webrtc open connection stuff
+
         let dc = null;
         let uname;
         $(function () {
             uname = getCookie('usr');
             var chat = $.connection.chatHub;
-            let lc = null;
 
             chat.client.firstSDP = function (message) {
                 lc.setRemoteDescription(JSON.parse(message)).then(a => console.log("offer set!"));

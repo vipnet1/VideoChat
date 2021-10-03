@@ -1,4 +1,6 @@
-﻿async function getConnectedDevices(type) {
+﻿
+
+async function getConnectedDevices(type) {
     const devices = await navigator.mediaDevices.enumerateDevices();
     return devices.filter(device => device.kind === type)
 }

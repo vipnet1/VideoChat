@@ -82,3 +82,8 @@ body {
 .dataform input[type="button"] {
     margin-top: 10px;
 }
+
+#localVideo {
+    width: 10%;
+    height: 10%;
+}
