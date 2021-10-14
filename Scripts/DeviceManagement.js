@@ -26,7 +26,6 @@ async function InitAudioStream() { //true if success
         const audioElement = document.querySelector('#localAudio');
         audioElement.srcObject = stream;
         console.log('init mic')
-        audioYES = true;
         return true;
     } catch (error) {
         console.error('Error opening just mic.', error);
@@ -48,9 +47,25 @@ async function InitVideoStream() { //true if success
     return false;
 }
 
+function TryAddStream(pc) {
+    const localVideo = document.querySelector('#localVideo');
+    if (localVideo.srcObject !== null) {
+        localVideo.srcObject.getTracks().forEach((track) => {
+            pc.addTrack(track, localVideo.srcObject)
+        })
+    }
+    if (localAudio.srcObject !== null) {
+        const localAudio = document.querySelector('#localAudio');
+        localAudio.srcObject.getTracks().forEach((track) => {
+            pc.addTrack(track, localAudio.srcObject)
+        })
+    }
+}
 
-async function InitStreams(isCamOpen, isAudioOpen) { //3 - audio and video ready. 2 - just audio. 1 - just videio. 0 - norhing.
 
+async function InitStreams(isCamOpen, isAudioOpen) { //3 - audio and video ready. 2 - just audio. 1 - just videio. 0 - nothing.
+
+    //booleans
     const audioYES = await InitAudioStream();
     const videoYES = await InitVideoStream();
 

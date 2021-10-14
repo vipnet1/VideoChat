@@ -43,6 +43,12 @@ namespace VideoChat.Controllers
             }
             return false;
         }
+
+        public ActionResult Room_To_Index()
+        {
+            Session["room"] = null;
+            return new RedirectResult("Index");
+        }
         
         // GET: My
         public async Task<ActionResult> Index()
@@ -70,10 +76,7 @@ namespace VideoChat.Controllers
             if (!wasOnMainPage()) return new RedirectResult("Index");
             if (isLoggedIn())
             {
-                if(!isRoomReady())
-                    return View();
-                else
-                    return new RedirectResult("Room");
+                return View();
             }
             else
                 return new RedirectResult("Login");

@@ -84,6 +84,11 @@ body {
 }
 
 #localVideo {
-    width: 10%;
-    height: 10%;
+    width: 20%;
+    height: 20%;
+}
+
+.txt_room {
+    margin-left: 32px;
+    color: black;
 }

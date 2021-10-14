@@ -3,21 +3,21 @@
     Layout = "~/Views/Shared/_LayoutPage1.cshtml";
 }
 
-<div class="dataform">
-    Insert new Username
-    <br>
-    @Html.TextBox("UserName")
-    <br>
-    Insert new Password
-    <br>
-    @Html.TextBox("Password")
-    <br>
-    Repeat new Password
-    <br>
-    @Html.TextBox("Password_2")
-    <br>
-    <input type="button" value="OK" onclick="myClick()" />
-</div>
+    <div class="dataform">
+        Insert new Username
+        <br>
+        @Html.TextBox("UserName")
+        <br>
+        Insert new Password
+        <br>
+        <input id="Password" type="password" value="" />
+        <br>
+        Repeat new Password
+        <br>
+        <input id="Password_2" type="password" value="" />
+        <br>
+        <input type="button" value="OK" onclick="myClick()" />
+    </div>
 
 <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
 

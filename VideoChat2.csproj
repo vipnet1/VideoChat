@@ -164,6 +164,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Stylesheet.css" />
+    <Content Include="TODO.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -206,6 +207,7 @@
     <Content Include="Views\my\Room.cshtml" />
     <Content Include="Views\my\SignUp.cshtml" />
     <Content Include="Views\Shared\_LayoutPage1_NoMenu.cshtml" />
+    <Content Include="Views\Shared\_LayoutPageRoom.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -241,7 +243,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54609</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:41677/</IISUrl>
+          <IISUrl>http://localhost:52626/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

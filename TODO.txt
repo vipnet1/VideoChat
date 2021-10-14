@@ -1,0 +1,62 @@
+﻿
+DONE 14.10.21
+
+#video-audio sending working in all cases where the devices connected before SDP creation. tested with 2 cameras and audio devices.
+#passwords now hidden
+#now you can return back from Room view but will lose all data(peer connections etc)
+#if you click on Room even if server remembers that connection established, you will go throw the connect process.
+	if you clicked on Leave buttton inside Room view Session["room"] will be set to null and you will be redirected to home page
+
+#minor css updates(Room view)
+
+
+
+
+
+
+
+
+
+
+TODO
+
+#decide whether we need information whether user in room or not after the update(Session["room"] in myController) and if not remove it and not needed if statemenets.
+
+#remove data about room when all data to open WEBRTC connection sent --> do inside Hub1 the same moment when we remove values from dict.
+	Here the challenge is to find a way to communicate with database so far from the controller.
+
+#decide final database structure --> how coluumns actually will look like, maybe we should discard something? --- we will sit on it together
+
+#find the best and safest way to authenticate. remove the dangerous cookie method. some options in my head:
+	a)get the device from which client connects and generate a token for a specific time(3 days-week) and if cookie from same device, browser etc sent with token
+		in cookie allow connection.
+	b)the simplest way - just disable cookie user have to type password, in most browsers already option of saving login credentials by default.
+
+#write specific chrome code instead of ontrack. Chrome is one of if not the most popular browser, and ontrack event not working in it. we should write and test code
+	where if its chrome we should use some other event instead of ontrack(if remember right the one we need is onaddtrack)
+
+#password encryption. right now we are encrypting password to SHA-256 whats the most secure option. but we store in database only first 64 characters of it(bug, also should be fixed)
+	we should decide whether we want the encryption to be on client or server and what are the consequences. OPTIONAL - add salt, some additional bits the server adds to increase
+	security via its calculations. i dont know much about it we can read in the web. 
+
+#right now the room video/audio sending will work only in case we plugged it in and gave permission before SDP creation. We have only two options:
+	1)to fix it. the only way to do that is to generate new SDP string based on new tracks and init connection again. The easy thing - we already have data channel
+		between the peers. my recommendation - create on both users temporary RTCPeerConnection, and configure its local/remote description via sending data
+		via already initialized data channel. when its ready swap the old rtcpeerconnection with the old one.
+		Its possible, but it wil be a hard task and we should thing if we want to get into it.
+
+	2)to not fix it. even in that case can be situation when i see that i share video and thing that its transmitted when its actually not, and those misunderstandings
+		should be fixed.
+
+#set ui so it looks good. for example in Room camera/mic images sometimes go down because video element too big or when we stretch browser etc. to make homepage meaningful.
+	Ben you should take this one in case you wanna practice css a bit :)
+
+
+OPTIONAL
+	#sharescreen implementation
+
+	#add some text that indicates number of participants in room. suppose me and another guy in room but i dont know about it till he turns on video/talks on chat etc.
+		we want indicator to show up when someone joins room and not just in debug console.
+
+	#weird things like when we reload web page videos not showing up anymore. potentional fix is to save lc, dc variables in cookie and in case web page reloads fast
+		access them without needing to open new P2P connection(also good if later we decide to allow return to same room from homepage)
