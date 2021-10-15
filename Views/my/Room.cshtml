@@ -63,13 +63,21 @@
         let lc = new RTCPeerConnection();
 
         //add tracks to current remote stream. TODO: prevent too many tracks from being added(multiple cameras).
-        lc.ontrack = (event) => {
-            console.log('ontrack event')
+
+        function OnNewTrack(event) {
+            console.log('ontrack/onaddtrack event')
             if (remoteVid.srcObject === null) { //if dont have object to hold remote stream create one
                 remoteVid.srcObject = new MediaStream()
             }
             remoteVid.srcObject.addTrack(event.track, remoteVid.srcObject);
-        };
+        }
+
+        if (navigator.userAgent.indexOf("Chrome") != -1) { //means its chrome
+            lc.ontrack = OnNewTrack
+        }
+        else { //means not chrome ontrack in most cases will work
+            lc.onaddtrack = OnNewTrack
+        }
 
 
 

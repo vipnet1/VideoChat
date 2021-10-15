@@ -13,14 +13,22 @@ DONE 14.10.21
 
 
 
+DONE 14.10.21
 
+TASK: #decide whether we need information whether user in room or not after the update(Session["room"] in myController) and if not remove it and not needed if statemenets.
+DONE: Session[room] needed. actually client never able to click on the Room tab in the menu. he's always redirected there after Connect view. to recognize
+	whether he just clicked there or redirection from Connect tab we need Session[room]
+
+
+TASK: #write specific chrome code instead of ontrack. Chrome is one of if not the most popular browser, and ontrack event not working in it. we should write and test code
+	where if its chrome we should use some other event instead of ontrack(if remember right the one we need is onaddtrack)
+
+DONE: now working also with chrome. if statemenet decides whether to use ontrack or onaddtrack. tested and working with videoinput.
 
 
 
 
 TODO
-
-#decide whether we need information whether user in room or not after the update(Session["room"] in myController) and if not remove it and not needed if statemenets.
 
 #remove data about room when all data to open WEBRTC connection sent --> do inside Hub1 the same moment when we remove values from dict.
 	Here the challenge is to find a way to communicate with database so far from the controller.
@@ -31,9 +39,6 @@ TODO
 	a)get the device from which client connects and generate a token for a specific time(3 days-week) and if cookie from same device, browser etc sent with token
 		in cookie allow connection.
 	b)the simplest way - just disable cookie user have to type password, in most browsers already option of saving login credentials by default.
-
-#write specific chrome code instead of ontrack. Chrome is one of if not the most popular browser, and ontrack event not working in it. we should write and test code
-	where if its chrome we should use some other event instead of ontrack(if remember right the one we need is onaddtrack)
 
 #password encryption. right now we are encrypting password to SHA-256 whats the most secure option. but we store in database only first 64 characters of it(bug, also should be fixed)
 	we should decide whether we want the encryption to be on client or server and what are the consequences. OPTIONAL - add salt, some additional bits the server adds to increase

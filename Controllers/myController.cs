@@ -140,7 +140,7 @@ namespace VideoChat.Controllers
 
             Session["room"] = await dal.JoinRoom(code, (Session["usr"] as User).UserName);
             if (isRoomReady())
-                return Room();
+                return new RedirectResult("Room");
             else
             {
                 return Content("");
