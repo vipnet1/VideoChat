@@ -6,15 +6,15 @@
     <div class="dataform">
         Insert new Username
         <br>
-        @Html.TextBox("UserName")
+        <input id="UserName" type="text" maxlength="20" placeholder="username"/>
         <br>
         Insert new Password
         <br>
-        <input id="Password" type="password" value="" />
+        <input id="Password" type="password" placeholder="password" maxlength = "50"/>
         <br>
         Repeat new Password
         <br>
-        <input id="Password_2" type="password" value="" />
+        <input id="Password_2" type="password" placeholder="repeat password" maxlength = "50"/>
         <br>
         <input type="button" value="OK" onclick="myClick()" />
     </div>
@@ -33,17 +33,15 @@
         let UserName = document.getElementById("UserName").value;
         let Password = document.getElementById("Password").value;
         let Password_2 = document.getElementById("Password_2").value;
-        if (UserName != "" && Password != "" && Password_2 != "") {
-            if (Password == Password_2) {
+        if (UserName !== "" && Password !== "" && Password_2 !== "") {
+            if (Password === Password_2) {
                 if (Password.length < 6) {
                     alert('too short password!');
                     return;
                 }
-                let enc_pass = SHA256(Password);
-                //alert(enc_pass);
                 let JSON_Obj = new Object();
                 JSON_Obj.UserName = UserName;
-                JSON_Obj.Password = enc_pass;
+                JSON_Obj.Password = Password;
                 let JSON_Str = JSON.stringify(JSON_Obj);
                 let url = '@Url.Action("ActionSignUp","my")';
                 xmlHttp.open("POST", url, true);

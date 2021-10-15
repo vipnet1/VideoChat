@@ -6,11 +6,11 @@
 <div class="dataform">
     Username
     <br>
-    <input type="text" id="UserName">
+    <input type="text" id="UserName" maxlength = "20" placeholder="username">
     <br>
     Password
     <br>
-    <input type="password" id="Password">
+    <input type="password" id="Password" placeholder="password" maxlength = "50">
     <br>
     <input type="button" value="OK" onclick="myClick()" />
 </div>
@@ -28,11 +28,10 @@
     function myClick() {
         let username = document.getElementById("UserName").value;
         let password = document.getElementById("Password").value;
-        if (username != "" && password != "") {
-            let enc_password = SHA256(password);
+        if (username !== "" && password !== "") {
             let JSON_Obj = new Object();
             JSON_Obj.UserName = username;
-            JSON_Obj.Password = enc_password;
+            JSON_Obj.Password = password;
             let JSON_Str = JSON.stringify(JSON_Obj);
             let url = '@Url.Action("ActionLogIn", "my")'
             xmlHttp.open("POST", url, true);

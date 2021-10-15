@@ -153,6 +153,7 @@
     </Compile>
     <Compile Include="Hubs\Hub1.cs" />
     <Compile Include="Models\Room.cs" />
+    <Compile Include="Models\SecurityHelper.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

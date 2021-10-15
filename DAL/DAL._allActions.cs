@@ -7,6 +7,7 @@ using VideoChat.Models;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
+using VideoChat2.Models;
 
 namespace VideoChat.DAL
 {
@@ -48,6 +49,10 @@ namespace VideoChat.DAL
             User findUser = await db.Users.FindAsync(u.UserName);
             if (findUser == null)
             {
+                u.Salt = SecurityHelper.GenerateSalt(64);
+                int l = u.Salt.Length;
+                u.Password = SecurityHelper.HashPassword(u.Password + SecurityHelper.pepper, u.Salt, SecurityHelper.nrIterations, SecurityHelper.hashLen);
+                int a = u.Password.Length;
                 db.Users.Add(u);
                 await db.SaveChangesAsync();
                 return "success";
@@ -63,7 +68,9 @@ namespace VideoChat.DAL
         public async Task<User> LogIn(User u)
         {
             User findUser = await db.Users.FindAsync(u.UserName);
-            if (findUser != null && u.Password == findUser.Password)
+            string pwdHashed = SecurityHelper.HashPassword(u.Password + SecurityHelper.pepper, findUser.Salt, SecurityHelper.nrIterations, SecurityHelper.hashLen);
+
+            if (findUser != null && pwdHashed.Equals(findUser.Password))
             {
                 return findUser;
             }
