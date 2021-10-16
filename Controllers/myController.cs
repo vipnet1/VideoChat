@@ -9,8 +9,14 @@ using System.Web.Script.Serialization;
 
 namespace VideoChat.Controllers
 {
+
     public class myController : Controller
     {
+        private const int MAX_USERNAME_LENGTH = 20;
+        private const int MIN_USERNAME_LENGTH = 1;
+        private const int MAX_PASSWORD_LENGTH = 50;
+        private const int MIN_PASSWORD_LENGTH = 6;
+
         UserContext db = new UserContext();
         DAL.DAL_allActions dal = new DAL.DAL_allActions();
 
@@ -23,26 +29,11 @@ namespace VideoChat.Controllers
         {
             HttpCookie cookie = new HttpCookie(name);
             cookie.Value = (Session["usr"] as User).UserName;
-            cookie.Expires = DateTime.Now.AddDays(1);
             return cookie;
         }
 
         public bool isLoggedIn() { return Session["usr"] != null; }
         public bool isRoomReady() { return Session["room"] != null; }
-
-        private async Task<bool> ValidateLoginCookie(HttpCookie usrCookie)
-        {
-            if (usrCookie != null)
-            {
-                User u = await dal.GetUser(usrCookie.Value);
-                if (u != null)
-                {
-                    Session["usr"] = u;
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public ActionResult Room_To_Index()
         {
@@ -51,12 +42,11 @@ namespace VideoChat.Controllers
         }
         
         // GET: My
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
             if(!wasOnMainPage() && !isLoggedIn())
             {
                 setWasOnMainPage();
-                await ValidateLoginCookie(Request.Cookies.Get("usr"));
             }
             return View();
         }
@@ -94,6 +84,11 @@ namespace VideoChat.Controllers
         [HttpPost]
         public async Task<string> ActionLogIn(string UserName, string Password)
         {
+            if (UserName.Length > MAX_USERNAME_LENGTH || Password.Length > MAX_PASSWORD_LENGTH)
+                return "error - too long password/username, hacker :)";
+            else if(UserName.Length < MIN_USERNAME_LENGTH || Password.Length < MIN_PASSWORD_LENGTH)
+                return "error - too short password/username, hacker :)";
+
             User u = new User(UserName, Password);
             User curr = await dal.LogIn(u);
             if(curr != null)
@@ -107,6 +102,11 @@ namespace VideoChat.Controllers
         [HttpPost]
         public async Task<string> ActionSignUp(string UserName, string Password)
         {
+            if (UserName.Length > MAX_USERNAME_LENGTH || Password.Length > MAX_PASSWORD_LENGTH)
+                return "error - too long password/username, hacker :)";
+            else if (UserName.Length < MIN_USERNAME_LENGTH || Password.Length < MIN_PASSWORD_LENGTH)
+                return "error - too short password/username, hacker :)";
+
             User u = new User(UserName, Password);
             string res = await dal.SignUp(u);
             if(res == "success")

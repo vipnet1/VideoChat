@@ -29,6 +29,10 @@
         let username = document.getElementById("UserName").value;
         let password = document.getElementById("Password").value;
         if (username !== "" && password !== "") {
+            if (password.length < 6) {
+                alert('too short password!');
+                return;
+            }
             let JSON_Obj = new Object();
             JSON_Obj.UserName = username;
             JSON_Obj.Password = password;

@@ -42,6 +42,27 @@ DONE: now we are encrypting password on server side. first we get the plain pass
 TASK: limit max username and passwords length in input fields. added placeholders. max username now 20 characters and max password 50 characters.
 
 
+DONE 16.10.21
+
+TASK: #we dont allow the user in input to exceed max password and max username characters, but he still can send requests to our database(via browser dev tools for example)
+	with infinite password and username length. we should write a code that checks the length of password and username one last time before inserting to database(or read how to discard
+	the exceede cahracters, for example user writes - timurikoabdisc - if limit 10 characters we will ge in parameters only timurikoab and 'disc' will be discarded as it didnt even existed.
+
+DONE: now on actionLogin, actionSignup in controller if input too long or too short we discard it via if statement. now even if some hack-kid played with js code and disabled
+	character limit in client side we will catch it on sesrver side. + passsword length check added to login view js so not needed requests wont be send(min psd 6 characters).
+	Tested with browser dev tools. This stuff working.
+
+
+TASK: #find the best and safest way to authenticate. remove the dangerous cookie method. some options in my head:(should search the web for that kinda stuff)
+	a)get the device from which client connects and generate a token for a specific time(3 days-week) and if cookie from same device, browser etc sent with token
+		in cookie allow connection.
+	b)the simplest way - just disable cookie user have to type password, in most browsers already option of saving login credentials by default.
+
+DONE: cookie required so we can remember our username when changing views, but we want to prevent from loggin in using cookie. now you cant login using cookie,
+		only via login/signup action. the moment you did it you get a cookie that expires the moment you close the browser, and even if somehow not - you still
+		wont be able to login using only the cookie method anymore.
+
+
 
 TODO
 
@@ -49,11 +70,6 @@ TODO
 	Here the challenge is to find a way to communicate with database so far from the controller.
 
 #decide final database structure --> how columns actually will look like, maybe we should discard something? --- we will sit on it together
-
-#find the best and safest way to authenticate. remove the dangerous cookie method. some options in my head:(should search the web for that kinda stuff)
-	a)get the device from which client connects and generate a token for a specific time(3 days-week) and if cookie from same device, browser etc sent with token
-		in cookie allow connection.
-	b)the simplest way - just disable cookie user have to type password, in most browsers already option of saving login credentials by default.
 
 #right now the room video/audio sending will work only in case we plugged it in and gave permission before SDP creation. We have only two options:
 	1)to fix it. the only way to do that is to generate new SDP string based on new tracks and init connection again. The easy thing - we already have data channel
@@ -70,10 +86,6 @@ TODO
 #add stun server configuration. in our local network webrtc works but outside we need to configure stun servers so we can ask google whats our ip, otherwise
 	connection won work. we do that in case we will implement that later for actual website. problem: there will be too many ice candidates and we need the local and remote
 	users to choose the correct ones. OPTIONAL - implement in our app TURN server functionality - if we are from the 10% that cant connect via webrtc transmit video using server.
-
-#we dont allow the user in input to exceed max password and max username characters, but he still can send requests to our database(via browser dev tools for example)
-	with infinite password and username length. we should write a code that checks the length of password and username one last time before inserting to database(or read how to discard
-	the exceede cahracters, for example user writes - timurikoabdisc - if limit 10 characters we will ge in parameters only timurikoab and 'disc' will be discarded as it didnt even existed.
 
 
 OPTIONAL
