@@ -18,7 +18,6 @@ namespace VideoChat.DAL
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 
-
         public static string RandomString(int length)
         {
             return new string(Enumerable.Repeat(chars, length)

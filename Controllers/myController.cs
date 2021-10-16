@@ -17,7 +17,6 @@ namespace VideoChat.Controllers
         private const int MAX_PASSWORD_LENGTH = 50;
         private const int MIN_PASSWORD_LENGTH = 6;
 
-        UserContext db = new UserContext();
         DAL.DAL_allActions dal = new DAL.DAL_allActions();
 
         private bool wasOnMainPage() {
@@ -120,7 +119,7 @@ namespace VideoChat.Controllers
         [HttpGet]
         public async Task<ActionResult> ActionNewRoom()
         {
-            if(isRoomReady())
+            if (isRoomReady())
                 return new RedirectResult("Room");
             if (!isLoggedIn())
                 return new RedirectResult("Login");

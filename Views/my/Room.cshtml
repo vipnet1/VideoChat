@@ -227,7 +227,7 @@
 
                     lc.createOffer().then(o => lc.setLocalDescription(o)).then(a => console.log("set successfully"));
                     setTimeout(function () {
-                        chat.server.rtr_FirstStepInitiator(uname, JSON.stringify(lc.localDescription));
+                        chat.server.rtr_FirstStepInitiator(uname, JSON.stringify(lc.localDescription), '@Model.identifier');
                     }, 2000);
                 }
                 else {
@@ -246,7 +246,7 @@
                         };
                     }
 
-                    chat.server.rtr_SecondStepJoiner(uname, '@Model.creatorUsername');
+                    chat.server.rtr_SecondStepJoiner(uname, '@Model.creatorUsername', '@Model.identifier');
                 }
             });
         });

@@ -41,6 +41,7 @@
             if (cookie == null)
                 location.href = '@Url.Action("LogIn","my")';
             else {
+                document.cookie = "usr=idk;expires=Thu, 01 Jan 1970 00:00:00 GMT"
                 location.href = '@Url.Action("Index", "my")';
             }
         }

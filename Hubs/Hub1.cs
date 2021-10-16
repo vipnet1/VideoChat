@@ -3,21 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using VideoChat.Controllers;
+using VideoChat.Models;
 
 namespace SignalR.Hubs
 {
     public class ChatHub : Hub
     {
-
         public class ConnectionInfo
         {
             public string connectionId;
             public string sdp;
+            public string identifier;
 
-            public ConnectionInfo(string connectionId, string sdp)
+            public ConnectionInfo(string connectionId, string sdp, string identifier)
             {
                 this.connectionId = connectionId;
                 this.sdp = sdp;
+                this.identifier = identifier;
             }
         }
 
@@ -26,15 +29,15 @@ namespace SignalR.Hubs
 
 
         //retirieve username and sdp of initiator
-        public void rtr_FirstStepInitiator(string uname, string sdp)
+        public void rtr_FirstStepInitiator(string uname, string sdp, string identifier)
         {
-            dict[uname] = new ConnectionInfo(Context.ConnectionId, sdp);
+            dict[uname] = new ConnectionInfo(Context.ConnectionId, sdp, identifier);
         }
 
         //retirieve username and who to connect, send sdp of initiator to joiner
-        public void rtr_SecondStepJoiner(string uname, string unameToConnect)
+        public void rtr_SecondStepJoiner(string uname, string unameToConnect, string identifier)
         {
-            dict[uname] = new ConnectionInfo(Context.ConnectionId, "");
+            dict[uname] = new ConnectionInfo(Context.ConnectionId, "", identifier);
             Clients.Caller.firstSDP(dict[unameToConnect].sdp);
         }
 
@@ -43,6 +46,12 @@ namespace SignalR.Hubs
         {
             dict[uname].sdp = sdp;
             Clients.Client(dict[unameToConnect].connectionId).secondSDP(dict[uname].sdp, uname);
+
+            UserContext db = new UserContext();
+            Room roomToRemove = new Room(dict[uname].identifier);
+            db.Rooms.Attach(roomToRemove);
+            db.Entry(roomToRemove).State = System.Data.Entity.EntityState.Deleted;
+            db.SaveChangesAsync();
 
             dict.Remove(uname);
             dict.Remove(unameToConnect);

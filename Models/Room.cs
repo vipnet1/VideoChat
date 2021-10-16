@@ -9,11 +9,13 @@ namespace VideoChat.Models
     public class Room
     {
         [Key]
-        public string identifier { get; set; }
-        public string creatorUsername { get; set; }
-        public string joinerUsername { get; set; }
+        public string identifier { get; set; } //varchar(32) PRIMARY KEY
+        public string creatorUsername { get; set; } //varchar(20) NOT NULL
+        public string joinerUsername { get; set; } //varchar(20)
 
         public Room() {}
+
+        public Room(string identifier) { this.identifier = identifier; }
         public Room(string identifier, string creatorUsername)
         {
             this.identifier = identifier;

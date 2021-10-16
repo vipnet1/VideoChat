@@ -7,9 +7,9 @@ namespace VideoChat.Models
     public class User
     {
         [Key]
-        public string UserName { get; set; } //varchar(20)
-        public string Password { get; set; } //varchar(64)
-        public string Salt { get; set; } //varchar(64)
+        public string UserName { get; set; } //varchar(20) PRIMARY KEY
+        public string Password { get; set; } //varchar(100) NOT NULL
+        public string Salt { get; set; } //varchar(100) NOT NULL
 
         public User() {}
 

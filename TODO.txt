@@ -63,13 +63,19 @@ DONE: cookie required so we can remember our username when changing views, but w
 		wont be able to login using only the cookie method anymore.
 
 
+TASK: #decide final database structure --> how columns actually will look like, maybe we should discard something? --- we will sit on it together
 
-TODO
+DONE: Final Structure of db decided.
 
-#remove data about room when all data to open WEBRTC connection sent --> do inside Hub1 the same moment when we remove values from dict.
+
+TASK: #remove data about room when all data to open WEBRTC connection sent --> do inside Hub1 the same moment when we remove values from dict.
 	Here the challenge is to find a way to communicate with database so far from the controller.
 
-#decide final database structure --> how columns actually will look like, maybe we should discard something? --- we will sit on it together
+DONE: now data removes on webrtc connection data sent by server.
+
+
+
+TODO
 
 #right now the room video/audio sending will work only in case we plugged it in and gave permission before SDP creation. We have only two options:
 	1)to fix it. the only way to do that is to generate new SDP string based on new tracks and init connection again. The easy thing - we already have data channel
@@ -96,3 +102,5 @@ OPTIONAL
 
 	#weird things like when we reload web page videos not showing up anymore. potentional fix is to save lc, dc variables in cookie and in case web page reloads fast
 		access them without needing to open new P2P connection(also good if later we decide to allow return to same room from homepage)
+
+	#somehow find and remove unused rooms from databse.
