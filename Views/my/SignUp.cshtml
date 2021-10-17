@@ -22,13 +22,7 @@
 <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
 
 <script type="text/javascript">
-    var xmlHttp;
-    window.onload = function () {
-        if (window.ActiveXObject)
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        else if (window.XMLHttpRequest)
-            xmlHttp = new XMLHttpRequest();
-    }
+
     function myClick() {
         let UserName = document.getElementById("UserName").value;
         let Password = document.getElementById("Password").value;

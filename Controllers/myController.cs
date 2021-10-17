@@ -33,12 +33,6 @@ namespace VideoChat.Controllers
 
         public bool isLoggedIn() { return Session["usr"] != null; }
         public bool isRoomReady() { return Session["room"] != null; }
-
-        public ActionResult Room_To_Index()
-        {
-            Session["room"] = null;
-            return new RedirectResult("Index");
-        }
         
         // GET: My
         public ActionResult Index()
@@ -62,7 +56,7 @@ namespace VideoChat.Controllers
 
         public ActionResult Connect()
         {
-            if (!wasOnMainPage()) return new RedirectResult("Index");
+            if (!wasOnMainPage() || !isLoggedIn()) return new RedirectResult("Index");
             if (isLoggedIn())
             {
                 return View();
@@ -73,16 +67,31 @@ namespace VideoChat.Controllers
 
         public ActionResult Room()
         {
-            if (!wasOnMainPage()) return new RedirectResult("Index");
+            if (!wasOnMainPage() || !isLoggedIn()) return new RedirectResult("Index");
             if (isRoomReady())
                 return View(Session["room"] as Room);
             else
                 return new RedirectResult("Connect");
         }
 
+        [HttpGet]
+        public void ActionRemoveRoom()
+        {
+            dal.RemoveRoom(Request["roomId"]);
+            Session["room"] = null;
+        }
+
+        [HttpGet]
+        public string ActionLogOut()
+        {
+            Session["usr"] = null;
+            return "success";
+        }
+
         [HttpPost]
         public async Task<string> ActionLogIn(string UserName, string Password)
         {
+            if (isLoggedIn()) return "you already in...";
             if (UserName.Length > MAX_USERNAME_LENGTH || Password.Length > MAX_PASSWORD_LENGTH)
                 return "error - too long password/username, hacker :)";
             else if(UserName.Length < MIN_USERNAME_LENGTH || Password.Length < MIN_PASSWORD_LENGTH)
@@ -101,6 +110,7 @@ namespace VideoChat.Controllers
         [HttpPost]
         public async Task<string> ActionSignUp(string UserName, string Password)
         {
+            if (isLoggedIn()) return "you already in...";
             if (UserName.Length > MAX_USERNAME_LENGTH || Password.Length > MAX_PASSWORD_LENGTH)
                 return "error - too long password/username, hacker :)";
             else if (UserName.Length < MIN_USERNAME_LENGTH || Password.Length < MIN_PASSWORD_LENGTH)

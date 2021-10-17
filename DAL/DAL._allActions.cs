@@ -49,9 +49,7 @@ namespace VideoChat.DAL
             if (findUser == null)
             {
                 u.Salt = SecurityHelper.GenerateSalt(64);
-                int l = u.Salt.Length;
                 u.Password = SecurityHelper.HashPassword(u.Password + SecurityHelper.pepper, u.Salt, SecurityHelper.nrIterations, SecurityHelper.hashLen);
-                int a = u.Password.Length;
                 db.Users.Add(u);
                 await db.SaveChangesAsync();
                 return "success";
@@ -67,14 +65,22 @@ namespace VideoChat.DAL
         public async Task<User> LogIn(User u)
         {
             User findUser = await db.Users.FindAsync(u.UserName);
-            string pwdHashed = SecurityHelper.HashPassword(u.Password + SecurityHelper.pepper, findUser.Salt, SecurityHelper.nrIterations, SecurityHelper.hashLen);
 
-            if (findUser != null && pwdHashed.Equals(findUser.Password))
+            if (findUser != null)
             {
-                return findUser;
+                string pwdHashed = SecurityHelper.HashPassword(u.Password + SecurityHelper.pepper, findUser.Salt, SecurityHelper.nrIterations, SecurityHelper.hashLen);
+                if(pwdHashed.Equals(findUser.Password))
+                    return findUser;
             }
             return null;
         }
-       
+
+        public void RemoveRoom(string roomId)
+        {
+            Room roomToRemove = new Room(roomId);
+            db.Rooms.Attach(roomToRemove);
+            db.Entry(roomToRemove).State = System.Data.Entity.EntityState.Deleted;
+            db.SaveChangesAsync();
+        }
     }
 }

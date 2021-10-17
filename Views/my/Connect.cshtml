@@ -14,13 +14,7 @@
 </div>
 
 <script type="text/javascript">
-    var xmlHttp;
-    window.onload = function () {
-        if (window.ActiveXObject)
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        else if (window.XMLHttpRequest)
-            xmlHttp = new XMLHttpRequest();
-    }
+
     function NewRoomClick() {
         let url = '@Url.Action("ActionNewRoom", "my")';
         xmlHttp.open("GET", url, true);

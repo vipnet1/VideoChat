@@ -62,6 +62,15 @@
         let initingNow = false;
         let lc = new RTCPeerConnection();
 
+        window.onbeforeunload = function (evt) {
+            let url = '@Url.Action("ActionRemoveRoom", "my")'
+            xmlHttp.open("GET", url + '?roomId=' + '@Model.identifier', true);
+            xmlHttp.send();
+            try {
+                SendPartnerLeftMessage();
+            } catch (err) {}
+        };
+
         //add tracks to current remote stream. TODO: prevent too many tracks from being added(multiple cameras).
 
         function OnNewTrack(event) {
@@ -116,11 +125,6 @@
             initingNow = false;
         }
 
-        //every time device plugins/disconnects check again whether have cam/mic
-        navigator.mediaDevices.ondevicechange = function (event) {
-            TryInitCamAndMic();
-        }
-
 
 
         function Click_ShowDisableVideo() {
@@ -167,6 +171,11 @@
         function ConnectionOpenedMessage() {
             const msg = 'Connection established. Enjoy conversation :)\n\n'
             chatMessagesWindow.value += msg;
+        }
+
+        function SendPartnerLeftMessage() {
+            const msg = '*Your partner left the room. He cant join anymore, you can leave the room.*\n\n'
+            dc.send(msg);
         }
 
         function OnMessage(msg) {

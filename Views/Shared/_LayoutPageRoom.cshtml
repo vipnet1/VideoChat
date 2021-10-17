@@ -18,8 +18,17 @@
     @RenderBody()
 
 <script type="text/javascript">
+
+    var xmlHttp;
+    window.onload = function () {
+        if (window.ActiveXObject)
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        else if (window.XMLHttpRequest)
+            xmlHttp = new XMLHttpRequest();
+    }
+
         function Leave() {
-            location.href = '@Url.Action("Index","my")';
+            location.href = '@Url.Action("Index", "my")';
         }
 
 </script>

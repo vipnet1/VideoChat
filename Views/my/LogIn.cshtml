@@ -18,13 +18,7 @@
 <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
 
 <script type="text/javascript">
-    var xmlHttp;
-    window.onload = function () {
-        if (window.ActiveXObject)
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        else if (window.XMLHttpRequest)
-            xmlHttp = new XMLHttpRequest();
-    }
+
     function myClick() {
         let username = document.getElementById("UserName").value;
         let password = document.getElementById("Password").value;
@@ -48,9 +42,9 @@
         }
     }
     function getResponseLogIn() {
-        if (xmlHttp.readyState == 4) {
+        if (xmlHttp.readyState === 4) {
             alert(xmlHttp.responseText);
-            if (xmlHttp.responseText == "success") {
+            if (xmlHttp.responseText === "success") {
                 location.href = '@Url.Action("Index", "my")';
             }
         }

@@ -75,32 +75,71 @@ DONE: now data removes on webrtc connection data sent by server.
 
 
 
-TODO
+DONE 17.10.21
 
-#right now the room video/audio sending will work only in case we plugged it in and gave permission before SDP creation. We have only two options:
+#now on logout Session['usr'] is removed too from server side. more checks addded on server side.
+
+TASK: 	#somehow find and remove unused rooms from databse.
+
+DONE: situation now - a function called right before user quits browser/goes to different page that removes room from database(nothing if its null). also we
+keep the remove when webrtc open in hub. partner gets notification the moment friend left the room.
+
+
+DONE 18.10.21
+
+TASK: #right now the room video/audio sending will work only in case we plugged it in and gave permission before SDP creation. We have only two options:
 	1)to fix it. the only way to do that is to generate new SDP string based on new tracks and init connection again. The easy thing - we already have data channel
 		between the peers. my recommendation - create on both users temporary RTCPeerConnection, and configure its local/remote description via sending data
 		via already initialized data channel. when its ready swap the old rtcpeerconnection with the old one.
 		Its possible, but it wil be a hard task and we should thing if we want to get into it.
 
-	2)to not fix it. even in that case can be situation when i see that i share video and thing that its transmitted when its actually not, and those misunderstandings
+	2)to not fix it. even in that case can be situation when i see that i share video and think that its transmitted when its actually not, and those misunderstandings
 		should be fixed.
 
-#set ui so it looks good. for example in Room camera/mic images sometimes go down because video element too big or when we stretch browser etc. to make homepage meaningful.
+DONE: I chose approach 2. i disabled listening to device changes so if something disconnects - it will just not work. if connects - noeone will see it and the misunderstanding
+	that i can see myself and think that friend too when actually not is gone.
+
+
+TASK: #weird bug were when we logout we really logout and redirected to main page, but button on top remains 'logout' instead of 'login'. should be fixed.
+
+DONE: fixed. now when you just click login it logouts only if you in home page, otherwice redirects there. this way we can prevent logouts by mistake.
+
+
+TASK: #set ui so it looks good. for example in Room camera/mic images sometimes go down because video element too big or when we stretch browser etc. to make homepage meaningful.
 	Ben you should take this one in case you wanna practice css a bit :)
 
-#add stun server configuration. in our local network webrtc works but outside we need to configure stun servers so we can ask google whats our ip, otherwise
-	connection won work. we do that in case we will implement that later for actual website. problem: there will be too many ice candidates and we need the local and remote
-	users to choose the correct ones. OPTIONAL - implement in our app TURN server functionality - if we are from the 10% that cant connect via webrtc transmit video using server.
+DONE: ui already looks good. + now explanation on home page. room view images mve dynamicly, whats good for handling different screen sizes.
+
+
+TASK: #add some text that indicates number of participants in room. suppose me and another guy in room but i dont know about it till he turns on video/talks on chat etc.
+		we want indicator to show up when someone joins room and not just in debug console.
+
+DONE: message displayed when partner enters and leaves room, so we give the info its not must to present it somehow differently via chat its good, easy and comfortable.
+
+TASK: 	#weird things like when we reload web page videos not showing up anymore. potentional fix is to save lc, dc variables in cookie and in case web page reloads fast
+		access them without needing to open new P2P connection(also good if later we decide to allow return to same room from homepage)
+
+DONE: before i did that the moment someone leaves room, it deleted from db. what means if someone reloads web page room deleted, he will be redirected from room to hom page cause room deleted.
+		in case 2 participants in room the problem doesnt exist because room already deleted))
+
+
+TASK: #fixed bug where on login server tries to check via salt,pepper etc password of not existing user.
+DONE: Fixed.
+
+
+TODO
+
+TASK: #for some reason video and maybe audio not sharing anymore betwenn users(maybe we accidently did something wrong), we should find the reason and fix that.
 
 
 OPTIONAL
 	#sharescreen implementation
 
-	#add some text that indicates number of participants in room. suppose me and another guy in room but i dont know about it till he turns on video/talks on chat etc.
-		we want indicator to show up when someone joins room and not just in debug console.
 
-	#weird things like when we reload web page videos not showing up anymore. potentional fix is to save lc, dc variables in cookie and in case web page reloads fast
-		access them without needing to open new P2P connection(also good if later we decide to allow return to same room from homepage)
+-------------------------------------FOR NOT DECIDED NOT TO LOOK 'MENTION'--------------------------------------
+#add stun server configuration. in our local network webrtc works but outside we need to configure stun servers so we can ask google whats our ip, otherwise
+	connection won work. we do that in case we will implement that later for actual website. problem: there will be too many ice candidates and we need the local and remote
+	users to choose the correct ones. OPTIONAL - implement in our app TURN server functionality - if we are from the 10% that cant connect via webrtc transmit video using server.
 
-	#somehow find and remove unused rooms from databse.
+	MENTION: we cant host asp.net app, only asp.net core so we cant get outside of the local network, so we dont actually need to set those things up(but in casse we will thats easy
+	just send to RTCPeerConnection constructor property with some google stun servers, now better to leave that cause to generate another ICE candidates will take more time)
