@@ -61,10 +61,10 @@
         let videoReady = false, audioReady = false;
         let initingNow = false;
         let lc = new RTCPeerConnection();
+        const removeRoomUrl = '@Url.Action("ActionRemoveRoom", "my")';
 
         window.onbeforeunload = function (evt) {
-            let url = '@Url.Action("ActionRemoveRoom", "my")'
-            xmlHttp.open("GET", url + '?roomId=' + '@Model.identifier', true);
+            xmlHttp.open("GET", removeRoomUrl, true);
             xmlHttp.send();
             try {
                 SendPartnerLeftMessage();
