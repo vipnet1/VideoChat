@@ -21,7 +21,7 @@
 <div id="ChattingStuff">
     <textarea id="chatMessagesWindow" typeof="text" rows=25 cols=30 disabled="true"></textarea>
     <br />
-    <textarea id="chatWindow" typeof="text" rows=10 cols=30></textarea>
+    <textarea id="chatWindow" typeof="text" placeholder="Write your message here" rows=10 cols=30></textarea>
     <button id="sendBtn" onclick="SendChatMessage()">Send</button>
 </div>
 
@@ -30,11 +30,11 @@
 <br /><br />
 
 <video id="localVideo" autoplay playsinline></video>
-<audio id="localAudio" autoplay></audio>
+<audio id="localAudio" muted></audio>
 <br />
 <br />
-<img id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" />
-<img id="img_audio" onclick="Click_ShowDisableAudio()" src="~/Images/audio_on.png" draggable="false" />
+<img id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
+<img id="img_audio" onclick="Click_ShowDisableAudio()" src="~/Images/audio_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
 
 
 @Scripts.Render("~/bundles/jquery")

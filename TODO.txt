@@ -127,9 +127,17 @@ TASK: #fixed bug where on login server tries to check via salt,pepper etc passwo
 DONE: Fixed.
 
 
+DONE 19.10.21
+
+#now images of open/close camera/mic are not selectable and not draggable so its easier to click them. redundant code removed from DeviceManagement.js. All that
+time we had localAudio element, what means that ALL THAT TIME WE LISTENED TO OURSELVES. I decided to keep it for the ease of accesss to srcObject property but now
+its muted. Echo cancelation added.
+
+
 TODO
 
 TASK: #for some reason video and maybe audio not sharing anymore betwenn users(maybe we accidently did something wrong), we should find the reason and fix that.
+	fixed bug when you click connect after leaving room you still can join it(Session didnt delete).
 
 
 OPTIONAL

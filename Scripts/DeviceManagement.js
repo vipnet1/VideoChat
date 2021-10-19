@@ -5,23 +5,10 @@ async function getConnectedDevices(type) {
     return devices.filter(device => device.kind === type)
 }
 
-// Open camera with at least minWidth and minHeight capabilities
-async function openCamera(cameraId, minWidth, minHeight) {
-    const constraints = {
-        'audio': { 'echoCancellation': true },
-        'video': {
-            'deviceId': cameraId,
-            'width': { 'min': minWidth },
-            'height': { 'min': minHeight }
-        }
-    }
-
-    return await navigator.mediaDevices.getUserMedia(constraints);
-}
 
 async function InitAudioStream() { //true if success
     try {
-        const constraints = { 'audio': true };
+        const constraints = { 'audio': { 'echoCancellation': true } };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         const audioElement = document.querySelector('#localAudio');
         audioElement.srcObject = stream;
@@ -106,11 +93,3 @@ async function playAudio() {
     const stream = document.querySelector('#localAudio').srcObject;
     stream.getAudioTracks()[0].enabled = true;
 }
-
-const cameras = getConnectedDevices('videoinput');
-cameras.then(element => {
-    if (cameras && cameras.length > 0) {
-        const stream = openCamera(cameras[0].deviceId, 1280, 720);
-    }
-    return;
-});

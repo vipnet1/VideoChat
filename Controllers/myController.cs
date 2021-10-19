@@ -12,6 +12,8 @@ namespace VideoChat.Controllers
 
     public class myController : Controller
     {
+        private static int num = 0;
+
         private const int MAX_USERNAME_LENGTH = 20;
         private const int MIN_USERNAME_LENGTH = 1;
         private const int MAX_PASSWORD_LENGTH = 50;
@@ -37,7 +39,7 @@ namespace VideoChat.Controllers
         // GET: My
         public ActionResult Index()
         {
-            if(!wasOnMainPage() && !isLoggedIn())
+            if (!wasOnMainPage() && !isLoggedIn())
             {
                 setWasOnMainPage();
             }
@@ -69,16 +71,22 @@ namespace VideoChat.Controllers
         {
             if (!wasOnMainPage() || !isLoggedIn()) return new RedirectResult("Index");
             if (isRoomReady())
+            {
                 return View(Session["room"] as Room);
+            }
             else
                 return new RedirectResult("Connect");
         }
 
         [HttpGet]
-        public void ActionRemoveRoom()
+        public async Task ActionRemoveRoom()
         {
-            dal.RemoveRoom(Request["roomId"]);
-            Session["room"] = null;
+            if(isRoomReady())
+            {
+                Room room = Session["room"] as Room;
+                await dal.RemoveRoomAsync(room.identifier);
+                Session["room"] = null;
+            }
         }
 
         [HttpGet]
@@ -129,8 +137,6 @@ namespace VideoChat.Controllers
         [HttpGet]
         public async Task<ActionResult> ActionNewRoom()
         {
-            if (isRoomReady())
-                return new RedirectResult("Room");
             if (!isLoggedIn())
                 return new RedirectResult("Login");
 
@@ -142,8 +148,6 @@ namespace VideoChat.Controllers
         [HttpGet]
         public async Task<ActionResult> ActionJoinRoom(string code)
         {
-            if (isRoomReady())
-                return new RedirectResult("Room");
             if (!isLoggedIn())
                 return new RedirectResult("Login");
 
@@ -152,7 +156,7 @@ namespace VideoChat.Controllers
                 return new RedirectResult("Room");
             else
             {
-                return Content("");
+                return Content("fail");
             }
         }
     }

@@ -75,12 +75,13 @@ namespace VideoChat.DAL
             return null;
         }
 
-        public void RemoveRoom(string roomId)
+        public async Task<string> RemoveRoomAsync(string roomId)
         {
             Room roomToRemove = new Room(roomId);
             db.Rooms.Attach(roomToRemove);
             db.Entry(roomToRemove).State = System.Data.Entity.EntityState.Deleted;
-            db.SaveChangesAsync();
+            await db.SaveChangesAsync();
+            return "success";
         }
     }
 }
