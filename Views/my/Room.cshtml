@@ -33,8 +33,8 @@
 <audio id="localAudio" muted></audio>
 <br />
 <br />
-<img id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
-<img id="img_audio" onclick="Click_ShowDisableAudio()" src="~/Images/audio_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
+<img class="camMicImg" id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
+<img class="camMicImg" id="img_audio" onclick="Click_ShowDisableAudio()" src="~/Images/audio_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
 
 
 @Scripts.Render("~/bundles/jquery")
@@ -61,6 +61,7 @@
         let videoReady = false, audioReady = false;
         let initingNow = false;
         let lc = new RTCPeerConnection();
+        let isConOpen = false;
         const removeRoomUrl = '@Url.Action("ActionRemoveRoom", "my")';
 
         window.onbeforeunload = function (evt) {
@@ -162,10 +163,15 @@
         //chatting stuff
 
         function SendChatMessage() {
-            const txt = uname + ': ' + chatWindow.value + '\n';
-            dc.send(txt);
-            chatWindow.value = '';
-            chatMessagesWindow.value += txt;
+            if (isConOpen) {
+                const txt = uname + ': ' + chatWindow.value + '\n';
+                dc.send(txt);
+                chatWindow.value = '';
+                chatMessagesWindow.value += txt;
+            }
+            else {
+                chatMessagesWindow.value += 'Wait For P2P Connection To be Established.\n\n'
+            }
         }
 
         function ConnectionOpenedMessage() {
@@ -174,8 +180,10 @@
         }
 
         function SendPartnerLeftMessage() {
-            const msg = '*Your partner left the room. He cant join anymore, you can leave the room.*\n\n'
-            dc.send(msg);
+            if (isConOpen) {
+                const msg = '*Your partner left the room. He cant join anymore, you can leave the room.*\n\n'
+                dc.send(msg);
+            }
         }
 
         function OnMessage(msg) {
@@ -228,6 +236,7 @@
                     };
                     dc.onopen = e => {
                         console.log("Connection opened");
+                        isConOpen = true;
                         ConnectionOpenedMessage();
                     };
                     lc.onicecandidate = e => {
@@ -251,6 +260,7 @@
                         };
                         dc.onopen = e => {
                             console.log("Connection opened");
+                            isConOpen = true;
                             ConnectionOpenedMessage();
                         };
                     }

@@ -46,7 +46,6 @@
         if (xmlHttp.readyState == 4) {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.responseText != "fail") {
-                alert(xmlHttp.responseText);
                 location.href = '@Url.Action("Room","my")';
             }
             else
