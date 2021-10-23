@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Im The Layout Page</title>
+
+    <link href="@Url.Content("~/Content/Stylesheet.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="nav" style="background-color: red">
+        <ul>
+            <li><a href="javascript:void(0)" onclick="Leave()">Leave Room</a></li>
+        </ul>
+    </div>
+
+    @RenderBody()
+
+<script type="text/javascript">
+
+    var xmlHttp;
+    window.onload = function () {
+        if (window.ActiveXObject)
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        else if (window.XMLHttpRequest)
+            xmlHttp = new XMLHttpRequest();
+    }
+
+        function Leave() {
+            location.href = '@Url.Action("Index", "my")';
+        }
+
+</script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

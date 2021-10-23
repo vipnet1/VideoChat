@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Im The Layout Page</title>
+
+    <link href="@Url.Content("~/Content/Stylesheet.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="nav">
+        <ul>
+            <li><a href="javascript:void(0)" onclick="myIndex()">Home</a></li>
+            <li><a id="logTab" href="javascript:void(0)" onclick="myLogIn()">Login</a></li>
+            <li><a href="javascript:void(0)" onclick="mySignUp()">Signup</a></li>
+            <li><a href="javascript:void(0)" onclick="myConnect()">Connect</a></li>
+            <li><a href="javascript:void(0)" onclick="myRoom()">Room</a></li>
+        </ul>
+    </div>
+    <div id="divWelcome">
+        <p id="loginMsg">Not Logged In</p>
+    </div>
+    @RenderBody()
+
+
+    <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
+    <script type="text/javascript">
+        const cookie = getCookie('usr')
+        if (cookie != null) {
+            let obj = document.getElementById('loginMsg');
+            obj.style.color = 'limegreen';
+            obj.innerHTML = 'Logged In: Welcome ' + cookie;
+
+            obj = document.getElementById('logTab');
+            obj.innerHTML = 'Logout';
+            obj.style.color = 'orange';
+        }
+
+        var xmlHttp;
+        window.onload = function () {
+            if (window.ActiveXObject)
+                xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+            else if (window.XMLHttpRequest)
+                xmlHttp = new XMLHttpRequest();
+        }
+
+        function myLogIn() {
+            if (cookie == null)
+                location.href = '@Url.Action("LogIn","my")';
+            else {
+                if (typeof inHomePage === 'undefined') {
+                    location.href = '@Url.Action("Index", "my")';
+                    return;
+                }
+                document.cookie = "usr=idk;expires=Thu, 01 Jan 1970 00:00:00 GMT"
+
+                let url = '@Url.Action("ActionLogOut", "my")'
+                xmlHttp.open("GET", url, true);
+                xmlHttp.onreadystatechange = () => {
+                    if (xmlHttp.readyState === 4 && xmlHttp.responseText === "success") {
+                        location.href = '@Url.Action("Index", "my")';
+                    }
+                };
+                xmlHttp.send();
+            }
+        }
+
+        function mySignUp() {
+            if (cookie == null)
+                location.href = '@Url.Action("SignUp","my")';
+        }
+        function myIndex() {
+            location.href = '@Url.Action("Index", "my")';
+        }
+        function myConnect() {
+            if (cookie != null)
+                location.href = '@Url.Action("Connect", "my")';
+        }
+        function myRoom() {
+            if (cookie != null)
+                location.href = '@Url.Action("Room", "my")';
+        }
+
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

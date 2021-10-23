@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Im The Layout Page</title>
+
+    <link href="@Url.Content("~/Content/Stylesheet.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

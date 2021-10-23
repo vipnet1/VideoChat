@@ -1,0 +1,153 @@
+﻿
+DONE 14.10.21
+
+#video-audio sending working in all cases where the devices connected before SDP creation. tested with 2 cameras and audio devices.
+#passwords now hidden
+#now you can return back from Room view but will lose all data(peer connections etc)
+#if you click on Room even if server remembers that connection established, you will go throw the connect process.
+	if you clicked on Leave buttton inside Room view Session["room"] will be set to null and you will be redirected to home page
+
+#minor css updates(Room view)
+
+
+
+
+
+DONE 15.10.21
+
+TASK: #decide whether we need information whether user in room or not after the update(Session["room"] in myController) and if not remove it and not needed if statemenets.
+DONE: Session[room] needed. actually client never able to click on the Room tab in the menu. he's always redirected there after Connect view. to recognize
+	whether he just clicked there or redirection from Connect tab we need Session[room]
+
+
+TASK: #write specific chrome code instead of ontrack. Chrome is one of if not the most popular browser, and ontrack event not working in it. we should write and test code
+	where if its chrome we should use some other event instead of ontrack(if remember right the one we need is onaddtrack)
+
+DONE: now working also with chrome. if statemenet decides whether to use ontrack or onaddtrack. tested and working with videoinput.
+
+
+TASK: #password encryption. right now we are encrypting password to SHA-256 whats the most secure option. but we store in database only first 64 characters of it(bug, also should be fixed)
+	we should decide whether we want the encryption to be on client or server and what are the consequences. OPTIONAL - add salt, some additional bits the server adds to increase
+	security via its calculations. i dont know much about it we can read in the web.
+
+DONE: now we are encrypting password on server side. first we get the plain password, then we generate a salt(random number of bytes). we append to the plain password
+	the salt+pepper and haassh them multiple times(70 bytes encoding). but then the salt and the passwords are encoded to base64 and thats how will be stored in db.
+	watch https://www.youtube.com/watch?v=--tnZMuoK3E for whats encryption,salt,pepper etc.
+	NEED TO UPDATE THE DATABASE --> password will be VARCHAR(100) instead of VARCHAR(256), and new field added --> Salt of type VARCHAR(100) to User table.
+	UserName should be now VARCHAR(20)
+	all columns of User should be NOT NULL.
+	*from my debugging and understanding, with current written code salt always(no matter psd length) 88 characters length and hashed password 96, so just leave both of them varchar(100)
+
+
+TASK: limit max username and passwords length in input fields. added placeholders. max username now 20 characters and max password 50 characters.
+
+
+DONE 16.10.21
+
+TASK: #we dont allow the user in input to exceed max password and max username characters, but he still can send requests to our database(via browser dev tools for example)
+	with infinite password and username length. we should write a code that checks the length of password and username one last time before inserting to database(or read how to discard
+	the exceede cahracters, for example user writes - timurikoabdisc - if limit 10 characters we will ge in parameters only timurikoab and 'disc' will be discarded as it didnt even existed.
+
+DONE: now on actionLogin, actionSignup in controller if input too long or too short we discard it via if statement. now even if some hack-kid played with js code and disabled
+	character limit in client side we will catch it on sesrver side. + passsword length check added to login view js so not needed requests wont be send(min psd 6 characters).
+	Tested with browser dev tools. This stuff working.
+
+
+TASK: #find the best and safest way to authenticate. remove the dangerous cookie method. some options in my head:(should search the web for that kinda stuff)
+	a)get the device from which client connects and generate a token for a specific time(3 days-week) and if cookie from same device, browser etc sent with token
+		in cookie allow connection.
+	b)the simplest way - just disable cookie user have to type password, in most browsers already option of saving login credentials by default.
+
+DONE: cookie required so we can remember our username when changing views, but we want to prevent from loggin in using cookie. now you cant login using cookie,
+		only via login/signup action. the moment you did it you get a cookie that expires the moment you close the browser, and even if somehow not - you still
+		wont be able to login using only the cookie method anymore.
+
+
+TASK: #decide final database structure --> how columns actually will look like, maybe we should discard something? --- we will sit on it together
+
+DONE: Final Structure of db decided.
+
+
+TASK: #remove data about room when all data to open WEBRTC connection sent --> do inside Hub1 the same moment when we remove values from dict.
+	Here the challenge is to find a way to communicate with database so far from the controller.
+
+DONE: now data removes on webrtc connection data sent by server.
+
+
+
+DONE 17.10.21
+
+#now on logout Session['usr'] is removed too from server side. more checks addded on server side.
+
+TASK: 	#somehow find and remove unused rooms from databse.
+
+DONE: situation now - a function called right before user quits browser/goes to different page that removes room from database(nothing if its null). also we
+keep the remove when webrtc open in hub. partner gets notification the moment friend left the room.
+
+
+DONE 18.10.21
+
+TASK: #right now the room video/audio sending will work only in case we plugged it in and gave permission before SDP creation. We have only two options:
+	1)to fix it. the only way to do that is to generate new SDP string based on new tracks and init connection again. The easy thing - we already have data channel
+		between the peers. my recommendation - create on both users temporary RTCPeerConnection, and configure its local/remote description via sending data
+		via already initialized data channel. when its ready swap the old rtcpeerconnection with the old one.
+		Its possible, but it wil be a hard task and we should thing if we want to get into it.
+
+	2)to not fix it. even in that case can be situation when i see that i share video and think that its transmitted when its actually not, and those misunderstandings
+		should be fixed.
+
+DONE: I chose approach 2. i disabled listening to device changes so if something disconnects - it will just not work. if connects - noeone will see it and the misunderstanding
+	that i can see myself and think that friend too when actually not is gone.
+
+
+TASK: #weird bug were when we logout we really logout and redirected to main page, but button on top remains 'logout' instead of 'login'. should be fixed.
+
+DONE: fixed. now when you just click login it logouts only if you in home page, otherwice redirects there. this way we can prevent logouts by mistake.
+
+
+TASK: #set ui so it looks good. for example in Room camera/mic images sometimes go down because video element too big or when we stretch browser etc. to make homepage meaningful.
+	Ben you should take this one in case you wanna practice css a bit :)
+
+DONE: ui already looks good. + now explanation on home page. room view images mve dynamicly, whats good for handling different screen sizes.
+
+
+TASK: #add some text that indicates number of participants in room. suppose me and another guy in room but i dont know about it till he turns on video/talks on chat etc.
+		we want indicator to show up when someone joins room and not just in debug console.
+
+DONE: message displayed when partner enters and leaves room, so we give the info its not must to present it somehow differently via chat its good, easy and comfortable.
+
+TASK: 	#weird things like when we reload web page videos not showing up anymore. potentional fix is to save lc, dc variables in cookie and in case web page reloads fast
+		access them without needing to open new P2P connection(also good if later we decide to allow return to same room from homepage)
+
+DONE: before i did that the moment someone leaves room, it deleted from db. what means if someone reloads web page room deleted, he will be redirected from room to hom page cause room deleted.
+		in case 2 participants in room the problem doesnt exist because room already deleted))
+
+
+TASK: #fixed bug where on login server tries to check via salt,pepper etc password of not existing user.
+DONE: Fixed.
+
+
+DONE 19.10.21
+
+#now images of open/close camera/mic are not selectable and not draggable so its easier to click them. redundant code removed from DeviceManagement.js. All that
+time we had localAudio element, what means that ALL THAT TIME WE LISTENED TO OURSELVES. I decided to keep it for the ease of accesss to srcObject property but now
+its muted. Echo cancelation added.
+
+
+TODO
+
+TASK: #for some reason video and maybe audio not sharing anymore betwenn users(maybe we accidently did something wrong), we should find the reason and fix that.
+	fixed bug when you click connect after leaving room you still can join it(Session didnt delete).
+
+
+OPTIONAL
+	#sharescreen implementation
+
+
+-------------------------------------FOR NOT DECIDED NOT TO LOOK 'MENTION'--------------------------------------
+#add stun server configuration. in our local network webrtc works but outside we need to configure stun servers so we can ask google whats our ip, otherwise
+	connection won work. we do that in case we will implement that later for actual website. problem: there will be too many ice candidates and we need the local and remote
+	users to choose the correct ones. OPTIONAL - implement in our app TURN server functionality - if we are from the 10% that cant connect via webrtc transmit video using server.
+
+	MENTION: we cant host asp.net app, only asp.net core so we cant get outside of the local network, so we dont actually need to set those things up(but in casse we will thats easy
+	just send to RTCPeerConnection constructor property with some google stun servers, now better to leave that cause to generate another ICE candidates will take more time)

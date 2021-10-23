@@ -181,6 +181,7 @@
 
         function SendPartnerLeftMessage() {
             if (isConOpen) {
+                isConOpen = false;
                 const msg = '*Your partner left the room. He cant join anymore, you can leave the room.*\n\n'
                 dc.send(msg);
             }
@@ -226,7 +227,7 @@
 
             $.connection.hub.start().done(async function () {
 
-                alert('Plug in your camera/mic now and give permissions. Otherwise later you won be able to use them.')
+                alert('Plug in your camera/mic now and give permissions. Otherwise later you wont be able to use them.')
                 await TryPrepVidForSending()
 
                 if (uname == '@Model.creatorUsername') {

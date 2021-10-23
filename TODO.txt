@@ -136,8 +136,7 @@ its muted. Echo cancelation added.
 
 TODO
 
-TASK: #for some reason video and maybe audio not sharing anymore betwenn users(maybe we accidently did something wrong), we should find the reason and fix that.
-	fixed bug when you click connect after leaving room you still can join it(Session didnt delete).
+nothing left :)
 
 
 OPTIONAL

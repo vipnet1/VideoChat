@@ -1,0 +1,57 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+    <div class="dataform">
+        <input type="button" value="New Room" onclick="NewRoomClick()" />
+        <br><br>
+        Enter an existing one
+        <br>
+        <input type="text" id="RoomCode" placeholder="Code" maxlength="32">
+        <br>
+        <input type="button" value="Connect" onclick="JoinRoomClick()" />
+    </div>
+
+<script type="text/javascript">
+
+    function NewRoomClick() {
+        let url = '@Url.Action("ActionNewRoom", "my")';
+        xmlHttp.open("GET", url, true);
+        xmlHttp.onreadystatechange = getResponseNewRoom;
+        xmlHttp.send();
+    }
+    function getResponseNewRoom() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.responseText != "") {
+                location.href = '@Url.Action("Room","my")';
+            }
+        }
+    }
+
+
+    function JoinRoomClick() {
+        const code = document.getElementById('RoomCode').value;
+        if (code.length != 32) {
+            alert('Not a Valid Identificator')
+            return
+        }
+        let url = '@Url.Action("ActionJoinRoom", "my")' + '?code=' + code;
+        //alert(url);
+        xmlHttp.open("GET", url, true);
+        xmlHttp.onreadystatechange = getResponseJoinRoom;
+        xmlHttp.send();
+    }
+    function getResponseJoinRoom() {
+        if (xmlHttp.readyState == 4) {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.responseText != "fail") {
+                location.href = '@Url.Action("Room","my")';
+            }
+            else
+                alert("No Such Room Exists")
+        }
+        }
+    }
+
+</script>

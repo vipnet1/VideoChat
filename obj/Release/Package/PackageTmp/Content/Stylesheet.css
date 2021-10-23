@@ -1,0 +1,99 @@
+﻿
+body {
+    margin: 0;
+    padding: 0;
+    background-color: deepskyblue;
+}
+
+.mainHeader {
+    margin-left: 15px;
+    margin-top: 4px;
+}
+
+#ChattingStuff {
+    float: left;
+    padding: 10px 10px 10px 20px;
+}
+
+#divWelcome {
+    background-color: mediumslateblue;
+}
+
+#divWelcome p {
+    margin: 0;
+    background-color: mediumslateblue;
+    text-align: center;
+    color: darkred;
+    font-size: 22px;
+    font: Tahoma;
+}
+
+#nav {
+    background-color: blue;
+    height: auto;
+    font-size: 25px;
+    font-weight: bold;
+    font: Tahoma;
+    padding: 5px;
+}
+
+#nav ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    text-align: center;
+}
+
+#nav li {
+    display: inline;
+    padding: 15px;
+    vertical-align: middle;
+}
+
+#nav a {
+    text-decoration: none;
+    color: white;
+    padding: 8px 8px 8px 8px;
+    vertical-align: middle;
+    border-radius: 100px;
+    transition: 0.15s;
+}
+
+#nav a:hover {
+    transition: 0.15s;
+    color: black;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+#chatWindow {
+    margin: 10px;
+    background-color: cadetblue;
+    border-radius: 10px;
+}
+
+#chatMessagesWindow {
+    margin: 10px;
+    background-color: cornflowerblue;
+    border-radius: 10px;
+    color: black;
+}
+
+.dataform {
+    margin: 15px;
+}
+
+.dataform input[type="button"] {
+    margin-top: 10px;
+}
+
+#localVideo {
+    width: 20%;
+    height: 20%;
+}
+
+.txt_room {
+    margin-left: 32px;
+    color: black;
+}

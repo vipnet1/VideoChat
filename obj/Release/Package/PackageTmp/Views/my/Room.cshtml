@@ -1,0 +1,274 @@
+﻿@model VideoChat.Models.Room
+
+@{
+    ViewBag.Title = "Room";
+    Layout = "~/Views/Shared/_LayoutPageRoom.cshtml";
+}
+
+<!--those hidden img so server will send images to client, but they wont be visible till the right moment-->
+<img id="IMG_video_on" style="display: none;" src="~/Images/video_on.png" />
+<img id="IMG_video_off" style="display: none;" src="~/Images/video_off.png" />
+<img id="IMG_audio_on" style="display: none;" src="~/Images/audio_on.png" />
+<img id="IMG_audio_off" style="display: none;" src="~/Images/audio_off.png" />
+<img id="IMG_audio_off" style="display: none;" src="~/Images/audio_off.png" />
+
+<h2 class="txt_room">My Room:</h2>
+<br>
+<h3 class="txt_room">Identifier: @Model.identifier</h3>
+<h3 class="txt_room">Creator Name: @Model.creatorUsername</h3>
+<h3 id="joinerUname" class="txt_room">Joiner Name: @Model.joinerUsername</h3>
+
+<div id="ChattingStuff">
+    <textarea id="chatMessagesWindow" typeof="text" rows=25 cols=30 disabled="true"></textarea>
+    <br />
+    <textarea id="chatWindow" typeof="text" placeholder="Write your message here" rows=10 cols=30></textarea>
+    <button id="sendBtn" onclick="SendChatMessage()">Send</button>
+</div>
+
+<video id="remoteVideo" autoplay playsinline></video>
+<audio id="remoteAudio" autoplay></audio>
+<br /><br />
+
+<video id="localVideo" autoplay playsinline></video>
+<audio id="localAudio" muted></audio>
+<br />
+<br />
+<img class="camMicImg" id="img_video" onclick="Click_ShowDisableVideo()" src="~/Images/video_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
+<img class="camMicImg" id="img_audio" onclick="Click_ShowDisableAudio()" src="~/Images/audio_on.png" draggable="false" ondragstart="return false; unselectable="on"" />
+
+
+@Scripts.Render("~/bundles/jquery")
+
+@section scripts {
+    <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script type="text/javascript" src="@Url.Content("/Scripts/Extensions.js")"></script>
+    <script type="text/javascript" src="@Url.Content("/Scripts/DeviceManagement.js")"></script>
+    <script>
+        const IMG_VIDEO_ON = document.getElementById("IMG_video_on");
+        const IMG_VIDEO_OFF = document.getElementById("IMG_video_off");
+        const IMG_AUDIO_ON = document.getElementById("IMG_audio_on");
+        const IMG_AUDIO_OFF = document.getElementById("IMG_audio_off");
+
+        const localVide = document.getElementById("localVideo")
+        const remoteVid = document.getElementById("remoteVideo")
+
+        const chatMessagesWindow = document.getElementById('chatMessagesWindow');
+        const chatWindow = document.getElementById('chatWindow');
+        const img_video = document.getElementById('img_video');
+        const img_audio = document.getElementById('img_audio');
+
+        let videoReady = false, audioReady = false;
+        let initingNow = false;
+        let lc = new RTCPeerConnection();
+        let isConOpen = false;
+        const removeRoomUrl = '@Url.Action("ActionRemoveRoom", "my")';
+
+        window.onbeforeunload = function (evt) {
+            xmlHttp.open("GET", removeRoomUrl, true);
+            xmlHttp.send();
+            try {
+                SendPartnerLeftMessage();
+            } catch (err) {}
+        };
+
+        //add tracks to current remote stream. TODO: prevent too many tracks from being added(multiple cameras).
+
+        function OnNewTrack(event) {
+            console.log('ontrack/onaddtrack event')
+            if (remoteVid.srcObject === null) { //if dont have object to hold remote stream create one
+                remoteVid.srcObject = new MediaStream()
+            }
+            remoteVid.srcObject.addTrack(event.track, remoteVid.srcObject);
+        }
+
+        if (navigator.userAgent.indexOf("Chrome") != -1) { //means its chrome
+            lc.ontrack = OnNewTrack
+        }
+        else { //means not chrome ontrack in most cases will work
+            lc.onaddtrack = OnNewTrack
+        }
+
+
+
+        //camera/mic management stuff
+
+        async function TryInitCamAndMic() {
+            if (initingNow) return;
+            initingNow = true;
+            const num = await InitStreams()
+            streamsReady = true
+            switch (num) {
+                case 3:
+                    videoReady = audioReady = true;
+                    img_video.src = IMG_VIDEO_ON.src;
+                    img_audio.src = IMG_AUDIO_ON.src;
+                    break;
+                case 2:
+                    audioReady = true;
+                    videoReady = false;
+                    img_video.src = IMG_VIDEO_OFF.src;
+                    img_audio.src = IMG_AUDIO_ON.src;
+                    break;
+                case 1:
+                    videoReady = true;
+                    audioReady = false;
+                    img_video.src = IMG_VIDEO_ON.src;
+                    img_audio.src = IMG_AUDIO_OFF.src;
+                    break;
+                case 0:
+                    videoReady = audioReady = false;
+                    img_video.src = IMG_VIDEO_OFF.src;
+                    img_audio.src = IMG_AUDIO_OFF.src;
+                    break;
+            }
+
+            initingNow = false;
+        }
+
+
+
+        function Click_ShowDisableVideo() {
+            if (!videoReady) {
+                return;
+            };
+            if (img_video.src == IMG_VIDEO_ON.src) {
+                img_video.src = IMG_VIDEO_OFF.src;
+                disableVideo();
+            }
+            else {
+                img_video.src = IMG_VIDEO_ON.src;
+                playVideo();
+            }
+        }
+
+
+        function Click_ShowDisableAudio() {
+            if (!audioReady) {
+                return;
+            }
+            if (img_audio.src == IMG_AUDIO_ON.src) {
+                img_audio.src = IMG_AUDIO_OFF.src;
+                disableAudio();
+            }
+            else {
+                img_audio.src = IMG_AUDIO_ON.src;
+                playAudio();
+            }
+        }
+
+
+
+
+        //chatting stuff
+
+        function SendChatMessage() {
+            if (isConOpen) {
+                const txt = uname + ': ' + chatWindow.value + '\n';
+                dc.send(txt);
+                chatWindow.value = '';
+                chatMessagesWindow.value += txt;
+            }
+            else {
+                chatMessagesWindow.value += 'Wait For P2P Connection To be Established.\n\n'
+            }
+        }
+
+        function ConnectionOpenedMessage() {
+            const msg = 'Connection established. Enjoy conversation :)\n\n'
+            chatMessagesWindow.value += msg;
+        }
+
+        function SendPartnerLeftMessage() {
+            if (isConOpen) {
+                const msg = '*Your partner left the room. He cant join anymore, you can leave the room.*\n\n'
+                dc.send(msg);
+            }
+        }
+
+        function OnMessage(msg) {
+            chatMessagesWindow.value += msg;
+        }
+
+
+
+
+        //webrtc open connection stuff
+
+
+        //try init camera and mic before creating offer so partner can listen to it. if cam/mic not plugged in it wont work later. then add track to lc.
+        async function TryPrepVidForSending() {
+            await TryInitCamAndMic();
+            TryAddStream(lc);
+        }
+
+        let dc = null;
+        let uname;
+        $(function () {
+            uname = getCookie('usr'); //retrieve username from the cookie
+            var chat = $.connection.chatHub;
+
+            chat.client.firstSDP = async function (message) {
+                lc.setRemoteDescription(JSON.parse(message)).then(a => console.log("offer set!"));
+
+                lc.createAnswer().then(a => lc.setLocalDescription(a)).then(a => console.log("answer created"));
+
+                setTimeout(function () {
+                    chat.server.rtr_ThirdStepJoiner(uname, JSON.stringify(lc.localDescription), '@Model.creatorUsername');
+                }, 3000);
+            };
+
+            chat.client.secondSDP = function (message, partnerUname) {
+                lc.setRemoteDescription(JSON.parse(message));
+                document.getElementById('joinerUname').innerHTML = 'Joiner Name: ' + partnerUname;
+            };
+
+
+            $.connection.hub.start().done(async function () {
+
+                alert('Plug in your camera/mic now and give permissions. Otherwise later you won be able to use them.')
+                await TryPrepVidForSending()
+
+                if (uname == '@Model.creatorUsername') {
+                    dc = lc.createDataChannel("channel");
+                    dc.onmessage = e => {
+                        OnMessage(e.data);
+                    };
+                    dc.onopen = e => {
+                        console.log("Connection opened");
+                        isConOpen = true;
+                        ConnectionOpenedMessage();
+                    };
+                    lc.onicecandidate = e => {
+                        //console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
+                    }
+
+                    lc.createOffer().then(o => lc.setLocalDescription(o)).then(a => console.log("set successfully"));
+                    setTimeout(function () {
+                        chat.server.rtr_FirstStepInitiator(uname, JSON.stringify(lc.localDescription), '@Model.identifier');
+                    }, 2000);
+                }
+                else {
+
+                    lc.onicecandidate = e => {
+                        //console.log("new ice candidate, reprinting SDP: " + JSON.stringify(lc.localDescription));
+                    }
+                    lc.ondatachannel = e => {
+                        dc = e.channel;
+                        dc.onmessage = e => {
+                            OnMessage(e.data);
+                        };
+                        dc.onopen = e => {
+                            console.log("Connection opened");
+                            isConOpen = true;
+                            ConnectionOpenedMessage();
+                        };
+                    }
+
+                    chat.server.rtr_SecondStepJoiner(uname, '@Model.creatorUsername', '@Model.identifier');
+                }
+            });
+        });
+
+    </script>
+}
